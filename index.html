@@ -70,12 +70,17 @@
         .table-container {
             overflow-x: auto; /* Enable horizontal scrolling */
             width: 100%;
+            justify-content: center;
+            display: flex;
+            width: 100%;
+            padding: 10px;
         }
 
         /* Table styling */
         table {
             width: 100%;
             max-width: 800px;
+            margin: auto;     /* Center the table */
             border-collapse: collapse;
             margin-top: 20px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
@@ -156,13 +161,13 @@
         }
 
        /* Top lineup section styling */
-        #top-lineup {
+       #top-lineup {
             background-color: #1b1f99;
             padding: 15px;
             margin: 20px 0;
             border-radius: 8px;
-            width: 100%;
-            max-width: 800px;
+            width: 100%;               /* Ensure it takes full width */
+            max-width: 800px;          /* Limit max width */
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
             color: #ffffff;
         }
@@ -195,13 +200,11 @@
             font-size: 1.1em;
         }
 
-        /* Container for the progress bars */
+        /* Container for progress bars */
         .progress-bars {
             display: flex;
-            gap: 15px; /* Space between the bars */
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            flex-direction: row; /* Arrange bars side by side */
         }
 
         /* Individual progress bar container */
@@ -209,39 +212,36 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 20px;
-            height: 60px;
-            position: relative;
+            flex-basis: 45%; /* Controls the container width */
+            margin: 0 5px;
         }
 
-        /* Progress bar background */
+        /* Fixed size for the actual progress bar background */
         .progress-bar-background {
-            width: 100%;
-            height: 50px; /* Adjust height as needed */
-            background-color: #cccccc; /* Light gray background for unfilled portion */
-            border-radius: 5px;
-            overflow: hidden;
+            width: 30px;      /* Set a fixed width for the progress bar */
+            height: 100px;    /* Set a fixed height for the progress bar */
+            background-color: #0b1392;
             position: relative;
+            border-radius: 4px;
+            overflow: hidden;
         }
 
-        /* Progress fill for each bar */
+        /* Progress fill inside the progress bar */
         .progress-fill {
+            width: 100%;      /* Full width to fill the background */
             position: absolute;
             bottom: 0;
-            width: 100%;
             background-color: #3eff2c;
-            transition: height 0.3s ease;
-            border-radius: 5px;
+            border-radius: 4px 4px 0 0; /* Rounded top edges */
         }
 
-        /* Label below each bar */
+        /* Progress label */
         .progress-label {
+            font-size: 0.9em;
             margin-top: 5px;
-            font-size: 0.7em;
-            color: #ffffff;
+            white-space: nowrap;
             text-align: center;
         }
-
 
 
 
@@ -255,8 +255,8 @@
     <a id="donate-button" href="https://buymeacoffee.com/stats2cash" target="_blank">Donate if you Enjoy!</a>
 
     <div id="statInfo">
-        <p><strong>Stat(s):</strong> Blocks and Steals</p>
-        <p><strong>Thresholds:</strong> Blocks: 5, Steals: 5</p>
+        <p><strong>Stat(s):</strong> Assists and Rebounds</p>
+        <p><strong>Thresholds:</strong> Assists: 20, Rebounds: 20</p>
     </div>
 
     <div id="top-lineup">
@@ -265,8 +265,8 @@
             <thead>
                 <tr>
                     <th>Player Name</th>
-                    <th>Blocks</th>
-                    <th>Steals</th>
+                    <th>Assists</th>
+                    <th>Rebounds</th>
                 </tr>
             </thead>
             <tbody>
@@ -291,11 +291,11 @@
                 <tr>
                     <th>Player Name</th>
                     <th>Team</th>
-                    <th>Blocks</th>
-                    <th>Steals</th>
+                    <th>Assists</th>
+                    <th>Rebounds</th>
                     <th>Combined Total</th>
-                    <th>Blocks Threshold %</th> <!-- New column for Blocks threshold % -->
-                    <th>Steals Threshold %</th> <!-- New column for Steals threshold % -->
+                    <th>Assists Threshold %</th> <!-- New column for Blocks threshold % -->
+                    <th>Rebounds Threshold %</th> <!-- New column for Steals threshold % -->
                     <th>Combined Threshold %</th>
                     <th>Progress</th>
                 </tr>
@@ -308,10 +308,10 @@
     
     <script>
         async function getTopPlayers() {
-            const stat1 = "blocks";
-            const stat2 = "steals";
-            const threshold1 = 5;
-            const threshold2 = 5;
+            const stat1 = "assists";
+            const stat2 = "rebounds";
+            const threshold1 = 20;
+            const threshold2 = 20;
     
             // Select loading element and table body
             const loadingElement = document.getElementById('loading');
@@ -388,7 +388,7 @@
     
                     const stat1Label = document.createElement('div');
                     stat1Label.className = 'progress-label';
-                    stat1Label.textContent = "Blocks";
+                    stat1Label.textContent = "Assists";
                     stat1BarContainer.appendChild(stat1BarBackground);
                     stat1BarContainer.appendChild(stat1Label);
                     progressBars.appendChild(stat1BarContainer);
@@ -408,7 +408,7 @@
     
                     const stat2Label = document.createElement('div');
                     stat2Label.className = 'progress-label';
-                    stat2Label.textContent = "Steals";
+                    stat2Label.textContent = "Rebounds";
                     stat2BarContainer.appendChild(stat2BarBackground);
                     stat2BarContainer.appendChild(stat2Label);
                     progressBars.appendChild(stat2BarContainer);
