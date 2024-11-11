@@ -284,24 +284,26 @@
     <!-- Loading message -->
     <div id="loading">Loading data, please wait...</div>
 
-    <table id="playersTable" border="1">
-        <thead>
-            <tr>
-                <th>Player Name</th>
-                <th>Team</th>
-                <th>Blocks</th>
-                <th>Steals</th>
-                <th>Combined Total</th>
-                <th>Blocks Threshold %</th> <!-- New column for Blocks threshold % -->
-                <th>Steals Threshold %</th> <!-- New column for Steals threshold % -->
-                <th>Combined Threshold %</th>
-                <th>Progress</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data will be populated here -->
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table id="playersTable" border="1">
+            <thead>
+                <tr>
+                    <th>Player Name</th>
+                    <th>Team</th>
+                    <th>Blocks</th>
+                    <th>Steals</th>
+                    <th>Combined Total</th>
+                    <th>Blocks Threshold %</th> <!-- New column for Blocks threshold % -->
+                    <th>Steals Threshold %</th> <!-- New column for Steals threshold % -->
+                    <th>Combined Threshold %</th>
+                    <th>Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be populated here -->
+            </tbody>
+        </table>
+    </div>
     
     <script>
         async function getTopPlayers() {
