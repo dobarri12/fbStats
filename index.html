@@ -250,8 +250,6 @@
         }
 
 
-
-
     </style>
 </head>
 <body>
@@ -260,9 +258,11 @@
     <!-- Donate button -->
     <a id="donate-button" href="https://buymeacoffee.com/stats2cash" target="_blank">Donate if you Enjoy!</a>
 
+    <a id="donate-button" href="fastbreakplanner.html">Go to Planner</a>
+
     <div id="statInfo">
-        <p><strong>Stat(s):</strong> Free Throws Made and Fouls Drawn</p>
-        <p><strong>Threshold(s):</strong> Free Throws Made: 25 , Fouls Drawn: 25</p>
+        <p><strong>Stat(s):</strong> Assists and Field Goals Made</p>
+        <p><strong>Threshold(s):</strong> Assists: 15 , Field Goals Made: 25</p>
     </div>
 
     <div id="top-lineup">
@@ -306,10 +306,10 @@
     
     <script>
         async function getTopPlayers() {
-            let stat1 = "freeThrowsMade";
-            let stat2 = "foulsDrawn";
-            const threshold1 = 20;
-            const threshold2 = stat2 ? 10 : 0;
+            let stat1 = "assists";
+            let stat2 = "fieldGoalsMade";
+            const threshold1 = 15;
+            const threshold2 = stat2 ? 25 : 0;
 
             const loadingElement = document.getElementById('loading');
             const tableBody = document.getElementById('playersTable').getElementsByTagName('tbody')[0];
@@ -327,18 +327,30 @@
 
                 const filteredData = data.filter(player => player.playerName && player.playerName !== "Totals" && player.playerName !== "Name");
 
-                // Compute "Free Throws Made" if stat1 or stat2 is "freeThrowsMade"
+                // Compute "Free Throws Made" and "Field Goals Made" based on percentages
                 filteredData.forEach(player => {
+                    if (stat1 === "fieldGoalsMade") {
+                        player[stat1] = player.fieldGoalAttempts && player.fieldGoalPercent
+                            ? (player.fieldGoalAttempts * player.fieldGoalPercent).toFixed(0)
+                            : 0;
+                    }
+                    if (stat2 === "fieldGoalsMade") {
+                        player[stat2] = player.fieldGoalAttempts && player.fieldGoalPercent
+                            ? (player.fieldGoalAttempts * player.fieldGoalPercent).toFixed(0)
+                            : 0;
+                    }
+
                     if (stat1 === "freeThrowsMade") {
                         player[stat1] = player.freeThrowAttempts && player.freeThrowPercent
-                            ? player.freeThrowAttempts * (player.freeThrowPercent)
-                            : 0; 
+                            ? (player.freeThrowAttempts * player.freeThrowPercent).toFixed(0)
+                            : 0;
                     }
                     if (stat2 === "freeThrowsMade") {
                         player[stat2] = player.freeThrowAttempts && player.freeThrowPercent
-                            ? player.freeThrowAttempts * (player.freeThrowPercent)
-                            : 0; 
+                            ? (player.freeThrowAttempts * player.freeThrowPercent).toFixed(0)
+                            : 0;
                     }
+
                 });
 
                 const sortedData = filteredData.sort((a, b) => {
@@ -369,13 +381,13 @@
                     row.insertCell(0).textContent = player.playerName;
                     row.insertCell(1).textContent = player.team;
 
-                    const stat1Value = player[stat1] || 0;
-                    const stat2Value = stat2 === "foulsDrawn" ? "Do not have Stat Data" : player[stat2] || 0;
-                    const combinedTotal = stat2 === "foulsDrawn" ? stat1Value : stat1Value + stat2Value;
+                    const stat1Value = parseFloat(player[stat1] || 0).toFixed(0);
+                    const stat2Value = stat2 === "foulsDrawn" ? "Do not have Stat Data" : parseFloat(player[stat2] || 0).toFixed(0);
+                    const combinedTotal = stat2 === "foulsDrawn" ? stat1Value : (parseFloat(stat1Value) + parseFloat(stat2Value)).toFixed(0);
 
 
                     row.insertCell(2).textContent = stat1Value;
-                    if (stat2) row.insertCell(3).textContent = stat2Value === "Do not have Stat Data" ? stat2Value : stat2Value.toFixed(2);
+                    if (stat2) row.insertCell(3).textContent = stat2Value === "Do not have Stat Data" ? stat2Value : stat2Value;
                     row.insertCell(stat2 ? 4 : 3).textContent = combinedTotal;
 
                     const stat1Percent = Math.min((stat1Value / threshold1) * 100, 100);
@@ -490,13 +502,15 @@
                         cellName.textContent = player.playerName;
 
                         // Handle stat1 display and accumulate total
-                        cellStat1.textContent = stat1 === "foulsDrawn" ? "Do not have Stat Data" : player[stat1];
-                        if (stat1 !== "foulsDrawn") totalStat1 += player[stat1];
+                        const stat1Value = stat1 === "foulsDrawn" ? "Do not have Stat Data" : parseFloat(player[stat1] || 0);
+                        cellStat1.textContent = stat1Value;
+                        if (stat1 !== "foulsDrawn") totalStat1 += stat1Value;
 
                         // Handle stat2 display and accumulate total, if applicable
+                        const stat2Value = stat2 === "foulsDrawn" ? "Do not have Stat Data" : parseFloat(player[stat2] || 0);
                         if (stat2) {
-                            cellStat2.textContent = stat2 === "foulsDrawn" ? "Do not have Stat Data" : player[stat2];
-                            if (stat2 !== "foulsDrawn") totalStat2 += player[stat2];
+                            cellStat2.textContent = stat2Value;
+                            if (stat2 !== "foulsDrawn") totalStat2 += stat2Value;
                         }
 
                         // Append cells to the row and the row to the lineup table body
@@ -509,6 +523,7 @@
                     // Update the totals row with summed stats or "N/A" if stat data is unavailable
                     document.getElementById('total-stat1').textContent = stat1 === "foulsDrawn" ? "N/A" : totalStat1;
                     document.getElementById('total-stat2').textContent = stat2 === "foulsDrawn" || !stat2 ? "N/A" : totalStat2;
+
                 } else {
                     // If no lineup meets thresholds, show a message in the table
                     const noLineupRow = document.createElement('tr');
@@ -535,5 +550,3 @@
     
 </body>
 </html>
-
-
