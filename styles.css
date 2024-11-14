@@ -1,0 +1,37 @@
+
+
+    .stat-cell, .stat-header {
+        transition: opacity 0.3s;
+    }
+
+    .stat-cell[style*="display: none"], .stat-header[style*="display: none"] {
+        opacity: 0;
+    }
+
+    #gamesDisplay {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .game-pair {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 80px; /* Adjust width as needed */
+        text-align: center;
+    }
+    
+    .team {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px; /* Space between teams in a pair */
+    }
+    
+    .team-image {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 5px; /* Space between image and team name */
+    }
+    
