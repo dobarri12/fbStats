@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
+        <style>
+            /* Overall background */
+            body {
+                font-family: 'Roboto Condensed', sans-serif;
+                color: #0b1392;
+                background-color: #0b1392; /* Blue background */
+                margin: 0;
+                padding: 0;
+            }
+    
+            /* Heading styles */
+            h1 {
+                font-family: 'Orbitron', sans-serif;
+                color: #3eff2c;
+                text-align: center;
+                margin: 20px 0;
+            }
+    
+            /* Section for download button */
+            #downloadRunPlanButton {
+                font-family: 'Bebas Neue', sans-serif;
+                background-color: #0b1392;
+                color: #fff;
+                border: 2px solid #3eff2c;
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: background-color 0.3s ease, color 0.3s ease;
+                border-radius: 5px;
+                display: block;
+                margin: 20px auto;
+            }
+    
+            #downloadRunPlanButton:hover {
+                background-color: #3eff2c;
+                color: #0b1392;
+            }
+    
+            /* Table styling with green border */
+            table {
+                width: 90%;
+                margin: 20px auto;
+                border-collapse: collapse;
+                background-color: #fff;
+                border: 2px solid #3eff2c; /* Green border for all tables */
+                font-size: 16px;
+            }
+    
+            th, td {
+                padding: 12px;
+                border: 1px solid #ddd;
+                text-align: center;
+            }
+    
+            th {
+                background-color: #0b1392;
+                color: #fff;
+                font-family: 'Orbitron', sans-serif;
+            }
+    
+            /* Selected Player Tables - Fit Multiple in One Row */
+            #selectedPlayersTable {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: center;
+            }
+    
+            /* Individual table styling for each day’s selected players */
+            #selectedPlayersTable table {
+                width: 200px; /* Smaller width to fit multiple tables per row */
+                margin: 10px;
+            }
+    
+            #selectedPlayersTable th, #selectedPlayersTable td {
+                font-size: 14px;
+                padding: 8px;
+            }
+    
+            /* Games display section */
+            #gamesDisplay {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+    
+            /* Style for individual game match squares */
+            .game-pair {
+                background-color: #fff;
+                color: #0b1392;
+                border: 2px solid #3eff2c;
+                padding: 10px;
+                font-size: 14px;
+                text-align: center;
+                width: 80px; /* Smaller size for compact layout */
+                border-radius: 5px;
+            }
+
+            button {
+                font-family: 'Bebas Neue', sans-serif;
+                background-color: #0b1392;
+                color: #fff;
+                border: 2px solid #3eff2c;
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: background-color 0.3s ease, color 0.3s ease;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+
+            button:hover {
+                background-color: #3eff2c;
+                color: #0b1392;
+            }
+
+            #daySelect {
+                display: block;
+                margin: 0 auto 20px auto;
+                padding: 10px;
+                font-size: 16px;
+                border: 2px solid #3eff2c;
+                background-color: #0b1392;
+                color: #fff;
+                font-family: 'Roboto Condensed', sans-serif;
+                border-radius: 5px;
+                width: 200px;
+                text-align: center;
+                cursor: pointer;
+            }
+
+            #daySelect option {
+                color: #0b1392;
+            }
+
+            .section-title, #daySelect, #daySelect option {
+                color: #3eff2c; /* Green highlight color for visibility */
+            }
+
+            .section-title {
+                text-align: center;
+            }
+
+            /* Center the file upload container */
+            .file-upload-container {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin: 20px 0;
+            }
+
+            /* Style the file input */
+            #csvFileInput {
+                padding: 10px;
+                font-family: 'Bebas Neue', sans-serif;
+                background-color: #0b1392;
+                color: #fff;
+                border: 2px solid #3eff2c;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            /* Style the file input button */
+            #csvFileInput::-webkit-file-upload-button {
+                background: #0b1392;
+                color: #fff;
+                border: none;
+                font-family: 'Bebas Neue', sans-serif;
+                padding: 10px 15px;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+
+            #csvFileInput::-webkit-file-upload-button:hover {
+                background: #3eff2c;
+                color: #0b1392;
+            }
+
+            /* Center the "Sort by Combined Stats" button */
+            .centered-button {
+                display: flex;
+                justify-content: center;
+                margin-top: 10px;
+            }
+
+            /* Style for "Sort by Combined Stats" button */
+            #combinedStatsButton {
+                font-family: 'Bebas Neue', sans-serif;
+                background-color: #0b1392;
+                color: #fff;
+                border: 2px solid #3eff2c;
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                border-radius: 5px;
+            }
+
+            #combinedStatsButton:hover {
+                background-color: #3eff2c;
+                color: #0b1392;
+            }
+
+
+        </style>
+    
+    <title>Fast Break Projections</title>
+</head>
+<body>
+
+<h1>Fast Break Projections</h1>
+
+
+
+<!-- Section to display all days and their thresholds in a table format -->
+<h2 class="section-title">NBA Fast Break Run 3 Thresholds</h2>
+<div id="allThresholdsDisplay" style="margin-bottom: 20px;"></div>
+
+<div id="selectedPlayersTable" style="margin-top: 20px;">
+    <h3>Selected Players for Each Day</h3>
+    <table border="1" style="width: 100%;">
+        <thead>
+            <tr id="daysHeaderRow"></tr>
+        </thead>
+        <tbody id="playersBodyRow"></tbody>
+        <tfoot>
+            <tr id="clearButtonsRow"></tr>
+        </tfoot>
+    </table>
+</div>
+
+<button id="downloadRunPlanButton" style="display: none;" onclick="downloadRunPlan()">Download Run Plan</button>
+
+
+<!-- Section to display NBA games for the selected day -->
+<h2 class="section-title">NBA Games for Selected Day</h2>
+<div id="gamesDisplay" style="margin-bottom: 20px;"></div>
+
+
+<!-- Dropdown to select the day -->
+<label for="daySelect">Select Day:</label>
+<select id="daySelect" onchange="updateTableForSelectedDay()">
+    <option value="1">Day 1</option>
+    <option value="2">Day 2</option>
+    <option value="3">Day 3</option>
+    <option value="4">Day 4</option>
+    <option value="5">Day 5</option>
+    <option value="6">Day 6</option>
+    <option value="7">Day 7</option>
+    <option value="8">Day 8</option>
+    <option value="9">Day 9</option>
+    <option value="10">Day 10</option>
+    <option value="11">Day 11</option>
+    <option value="12">Day 12</option>
+</select>
+
+
+
+<!-- Section to display the stat thresholds for the selected day -->
+<div id="thresholdDisplay"></div>
+
+<!-- File upload input for Top Shot Moments -->
+<div class="file-upload-container">
+    <input type="file" id="csvFileInput" accept=".csv" />
+    <button onclick="processFiles()">Upload</button>
+</div>
+
+<div class="centered-button">
+    <button id="combinedStatsButton" style="display: none;">Sort by Combined Stats</button>
+</div>
+
+
+<!-- Add the Optimize Lineup button -->
+<!--<button onclick="optimizeLineup()">Optimize Lineup</button> -->
+
+<!-- Table to display processed data -->
+<table id="csvTable" border="1">
+    <thead>
+        <tr id="tableHeaders"></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<style>
+    .injured-player {
+        background-color: red;
+        color: white;
+    }
+</style>
+
+<script>
+
+    let userTriggeredSort = false;
+
+
+    // Initialize playerUsages to keep track of remaining uses for each player globally
+    let playerUsages = {};
+
+    function initializePlayerUsages() {
+        window.filteredData.forEach(player => {
+            playerUsages[player.playerName] = player.uses;
+        });
+    }
+
+
+const statMapping = {
+    "Points": "points",
+    "Rebounds": "rebounds",
+    "Assists": "assists",
+    "Steals": "steals",
+    "Blocks": "blocks",
+    "Turnovers": "turnovers",
+    "Field Goals Made": "fieldGoalsMade",
+    "Field Goals Attempted": "fieldGoalsAttempted",
+    "3s": "threePointMade",
+    "3s Attempted": "threePointAttempts",
+    "Free Throws Made": "freeThrowsMade",
+    "Free Throws Attempted": "freeThrowsAttempted",
+    "Offensive Rebounds": "offensiveRebounds",
+    "Defensive Rebounds": "defensiveRebounds"
+};
+
+
+const rarityOrder = ['Legendary', 'Rare', 'Common', 'Fandom'];
+const usageMapping = {
+    'Common': 1,
+    'Fandom': 1,
+    'Anthology': 2,
+    'Rare': 2,
+    'Legendary': 4
+};
+const rosterUrl = "https://script.google.com/macros/s/AKfycby0kzAojuJs1UNrcHrVVS3nxa4_kKNwyaiFhyxElFxeM4i1kCHsTRUcywfpdVpZVpidhA/exec";
+const projectionsUrl = "https://script.google.com/macros/s/AKfycbzHbTrH2clErBUnjF9CJfPRhurzreynw4eDtxV4gTil4MRZirUom5M5J3u8tZGsdW4A/exec";
+const thresholdsUrl = "https://script.google.com/macros/s/AKfycbxz8Sl8qXwwfTnD2vtKUpwYrbYEc__JaZlqSgOFNFpJsYoTErwJCISP84D_OnvBDoiC/exec";
+const nbaGamesUrl = "https://script.google.com/macros/s/AKfycbzGgkvUeRpFL9L7Jvzl_xN1k7j2V0fFByDMPJNiidCdbdBlInw0zRWrMF-XEeIJT5z9/exec";
+
+// Data Arrays
+let activeRoster = [];
+let projections = [];
+let thresholds = {};
+
+
+function isRunPlanComplete() {
+    for (let day = 1; day <= 12; day++) {
+        if (!selectedPlayers[day] || selectedPlayers[day].length < 5) {
+            return false; // If any day has fewer than 5 players, the plan isn't complete
+        }
+    }
+    return true; // All days have 5 players
+}
+
+// Fetch Functions
+async function fetchThresholdsData() {
+    try {
+        const response = await fetch(thresholdsUrl);
+        thresholds = await response.json();
+        console.log("Fetched thresholds:", thresholds); // Confirming the structure
+        displayAllThresholds();
+        updateTableForSelectedDay(); // Default to Day 1
+        return thresholds; // Return thresholds
+    } catch (error) {
+        console.error("Error fetching thresholds data:", error);
+        return null; // Return null in case of error
+    }
+}
+
+function getMappedKey(stat) {
+    return statMapping[stat] || stat;
+}
+
+
+async function fetchRosterData() {
+    try {
+        const response = await fetch(rosterUrl);
+        activeRoster = (await response.json()).map(entry => [entry.playerName, entry.nameFix]);
+    } catch (error) {
+        console.error("Error fetching roster data:", error);
+    }
+}
+
+async function fetchProjectionsData() {
+    try {
+        const response = await fetch(projectionsUrl);
+        projections = (await response.json()).map(row => ({
+            fixedPlayerName: row.fixedPlayerName,
+            playerName: row.playerName,
+            team: row.team,
+            minutes: row.minutes,
+            points: row.points,
+            rebounds: row.rebounds,
+            assists: row.assists,
+            steals: row.steals,
+            blocks: row.blocks,
+            turnovers: row.turnovers,
+            "assists-turnovers": row.assists - row.turnovers,
+            fieldGoalsMade: row.fieldGoalsMade,
+            fieldGoalsAttempted: row.fieldGoalsAttempted,
+            fieldGoalPercentage: row.fieldGoalPercentage,
+            threePointMade: row.threePointMade,
+            threePointAttempts: row.threePointAttempts,
+            threePointPercentage: row.threePointPercentage,
+            freeThrowsMade: row.freeThrowsMade,
+            freeThrowsAttempted: row.freeThrowsAttempted,
+            freeThrowPercentage: row.freeThrowPercentage,
+            offensiveRebounds: row.offensiveRebounds,
+            defensiveRebounds: row.defensiveRebounds,
+            injuries: row.injuries
+        }));
+
+        // Store the projections in localStorage
+        localStorage.setItem("projections", JSON.stringify(projections));
+        console.log("Fetched and saved projections to localStorage:", projections);
+        
+    } catch (error) {
+        console.error("Error fetching projections data:", error);
+    }
+}
+
+// Function to fetch NBA games data
+async function fetchNBAGamesData() {
+    try {
+        const response = await fetch(nbaGamesUrl);
+        const gamesData = await response.json();
+        return gamesData;
+    } catch (error) {
+        console.error("Error fetching NBA games data:", error);
+        return {};
+    }
+}
+
+let defaultSortApplied = false;
+
+// Display Functions
+
+async function displayNBAGames(gamesData, selectedDay = 1) {
+    const dayKey = `Day ${selectedDay}`;
+    const games = gamesData[dayKey] || [];
+    const gameDisplayContainer = document.getElementById("gamesDisplay");
+
+    if (!games || games.length === 0) {
+        gameDisplayContainer.innerHTML = "<p>No games scheduled for this day.</p>";
+        return;
+    }
+
+    gameDisplayContainer.innerHTML = ""; // Clear existing games
+
+    // Create rows of games
+    for (let i = 0; i < games.length; i += 2) {
+        const team1 = games[i];
+        const team2 = games[i + 1] || ""; // Handle odd number of teams
+
+        const gamePairDiv = document.createElement("div");
+        gamePairDiv.classList.add("game-pair");
+
+        // Team 1 image and name
+        if (team1) {
+            const team1Div = document.createElement("div");
+            team1Div.classList.add("team");
+
+            const team1Img = document.createElement("img");
+            team1Img.src = `Team Images/${team1}.png`;
+            team1Img.alt = team1;
+            team1Img.classList.add("team-image");
+
+            const team1Name = document.createElement("span");
+            team1Name.textContent = team1;
+
+            team1Div.appendChild(team1Img);
+            team1Div.appendChild(team1Name);
+
+            gamePairDiv.appendChild(team1Div);
+        }
+
+        // Team 2 image and name
+        if (team2) {
+            const team2Div = document.createElement("div");
+            team2Div.classList.add("team");
+
+            const team2Img = document.createElement("img");
+            team2Img.src = `Team Images/${team2}.png`;
+            team2Img.alt = team2;
+            team2Img.classList.add("team-image");
+
+            const team2Name = document.createElement("span");
+            team2Name.textContent = team2;
+
+            team2Div.appendChild(team2Img);
+            team2Div.appendChild(team2Name);
+
+            gamePairDiv.appendChild(team2Div);
+        }
+
+        // Append the paired teams to the game display container
+        gameDisplayContainer.appendChild(gamePairDiv);
+    }
+}
+
+
+
+
+document.getElementById("daySelect").onchange = async (event) => {
+    const selectedDay = event.target.value;
+    const gamesData = await fetchNBAGamesData(); // Fetch NBA games data
+    defaultSortApplied = false; // Reset for the new day selection
+    await displayNBAGames(gamesData, selectedDay); // Load NBA games for the selected day
+    updateTableForSelectedDay(window.filteredData); // Load data for the newly selected day
+};
+
+let selectedPlayers = {}; // Track selected players for each day
+
+// Initialize table headers for Days 1 through 12 with clear buttons
+function initializeDaysHeaders() {
+    const headerRow = document.getElementById("daysHeaderRow");
+    const clearButtonsRow = document.getElementById("clearButtonsRow");
+
+    headerRow.innerHTML = ""; // Clear any existing headers
+    clearButtonsRow.innerHTML = ""; // Clear any existing clear buttons
+
+    for (let i = 1; i <= 12; i++) {
+        // Add day headers
+        const th = document.createElement("th");
+        th.textContent = `Day ${i}`;
+        headerRow.appendChild(th);
+
+        // Add "Clear Lineup" buttons
+        const clearButtonCell = document.createElement("td");
+        const clearButton = document.createElement("button");
+        clearButton.textContent = "Clear Lineup";
+        clearButton.onclick = () => clearDayLineup(i); // Clear only the specific day
+        clearButtonCell.appendChild(clearButton);
+        clearButtonsRow.appendChild(clearButtonCell);
+    }
+}
+
+// Update the function to clear a specific day’s lineup
+function clearDayLineup(day) {
+    // Check if there are players selected for the given day
+    if (selectedPlayers[day]) {
+        // Loop through each player in the day's lineup and reset their usage count
+        selectedPlayers[day].forEach(playerName => {
+            if (playerUsages[playerName] !== undefined) {
+                playerUsages[playerName]++; // Reset the usage count
+            }
+        });
+
+        // Clear the selected players for that day
+        selectedPlayers[day] = [];
+    }
+
+    // Update the display after clearing
+    updateSelectedPlayersDisplay();
+
+    updateTableForSelectedDay(window.filteredData, day);
+}
+
+function downloadRunPlan() {
+    const headers = ["Player", "Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12"];
+    const rows = [
+        ["Player 1"],
+        ["Player 2"],
+        ["Player 3"],
+        ["Player 4"],
+        ["Player 5"]
+    ];
+
+    // Populate rows with player selections per day
+    for (let day = 1; day <= 12; day++) {
+        selectedPlayers[day].forEach((playerName, index) => {
+            rows[index].push(playerName);
+        });
+    }
+
+    // Add headers to CSV content
+    let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
+
+    // Append each row of player data
+    csvContent += rows.map(row => row.join(",")).join("\n");
+
+    // Create a downloadable link
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "Run_Plan.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+
+
+function updateSelectedPlayersDisplay() {
+    const selectedPlayersContainer = document.getElementById("selectedPlayersTable");
+    if (!selectedPlayersContainer) {
+        console.error("Container element 'selectedPlayersTable' not found in the HTML.");
+        return;
+    }
+    selectedPlayersContainer.innerHTML = ""; // Clear previous content
+
+    // Style the container to use flexbox for aligning tables in a row
+    selectedPlayersContainer.style.display = "flex";
+    selectedPlayersContainer.style.flexWrap = "wrap";
+    selectedPlayersContainer.style.gap = "20px";
+
+    for (let day = 1; day <= 12; day++) {
+        const dayKey = `Day ${day}`;
+        const thresholdData = thresholds[dayKey];
+        const statKeys = Object.keys(thresholdData).map(stat => statMapping[stat] || stat.toLowerCase().replace(/\s/g, ""));
+        const statNames = Object.keys(thresholdData);
+
+        // Create a container for each day's table
+        const daySection = document.createElement("div");
+        daySection.style.marginBottom = "20px";
+
+        // Create table structure with minimal width
+        const table = document.createElement("table");
+        table.style.borderCollapse = "collapse";
+        table.style.margin = "0 auto"; // Center the table in the day section
+        table.border = "1"; // Add border to the table
+
+        // Header for Day and Stats
+        const headerRow = document.createElement("tr");
+        const dayHeader = document.createElement("th");
+        dayHeader.colSpan = statNames.length + 1;
+        dayHeader.textContent = `Day ${day}`;
+        headerRow.appendChild(dayHeader);
+        table.appendChild(headerRow);
+
+        // Stat headers
+        const statHeaderRow = document.createElement("tr");
+        statHeaderRow.appendChild(document.createElement("th")); // Placeholder for "Player" column
+        statNames.forEach(statName => {
+            const statHeader = document.createElement("th");
+            statHeader.textContent = statName;
+            statHeaderRow.appendChild(statHeader);
+        });
+        table.appendChild(statHeaderRow);
+
+        // Rows for each selected player
+        let currentTotals = Array(statNames.length).fill(0);
+        (selectedPlayers[day] || []).forEach(playerName => {
+            const row = document.createElement("tr");
+            const playerCell = document.createElement("td");
+            playerCell.textContent = playerName;
+            row.appendChild(playerCell);
+
+            // Add player's stats for each threshold
+            const playerProjection = projections.find(proj => proj.fixedPlayerName === playerName);
+            statKeys.forEach((statKey, index) => {
+                const statCell = document.createElement("td");
+                const statValue = playerProjection ? parseFloat(playerProjection[statKey]) || 0 : 0;
+                statCell.textContent = statValue.toFixed(2);
+                statCell.style.border = "1px solid black"; // Add cell borders
+                row.appendChild(statCell);
+
+                // Add to current totals
+                currentTotals[index] += statValue;
+            });
+
+            table.appendChild(row);
+        });
+
+        // Row for "Stats Needed" (thresholds)
+        const thresholdRow = document.createElement("tr");
+        const thresholdLabelCell = document.createElement("td");
+        thresholdLabelCell.textContent = "Stats Needed:";
+        thresholdRow.appendChild(thresholdLabelCell);
+
+        statNames.forEach(statName => {
+            const thresholdCell = document.createElement("td");
+            thresholdCell.textContent = thresholdData[statName];
+            thresholdCell.style.border = "1px solid black"; // Add cell borders
+            thresholdRow.appendChild(thresholdCell);
+        });
+        table.appendChild(thresholdRow);
+
+        // Row for "Current Total"
+        const totalRow = document.createElement("tr");
+        const totalLabelCell = document.createElement("td");
+        totalLabelCell.textContent = "Current Total:";
+        totalRow.appendChild(totalLabelCell);
+
+        currentTotals.forEach((total, index) => {
+            const totalCell = document.createElement("td");
+            totalCell.textContent = total.toFixed(2);
+            // Apply green background if total meets the threshold
+            if (total >= thresholdData[statNames[index]]) {
+                totalCell.style.backgroundColor = "green";
+                totalCell.style.color = "white";
+            }
+            totalCell.style.border = "1px solid black"; // Add cell borders
+            totalRow.appendChild(totalCell);
+        });
+        table.appendChild(totalRow);
+
+        // Add the table and clear button for each day
+        daySection.appendChild(table);
+        const clearButton = document.createElement("button");
+        clearButton.textContent = "Clear Lineup";
+        clearButton.onclick = () => clearDayLineup(day);
+        daySection.appendChild(clearButton);
+
+        // Append day section to the main container
+        selectedPlayersContainer.appendChild(daySection);
+
+        const downloadButton = document.getElementById("downloadRunPlanButton");
+        if (isRunPlanComplete()) {
+            downloadButton.style.display = "block";
+        } else {
+            downloadButton.style.display = "none";
+        }
+    }
+}
+
+
+
+
+function addPlayerToDay(day, playerName) {
+    if (!selectedPlayers[day]) {
+        selectedPlayers[day] = [];
+    }
+
+    // Check if player can be added: limit to 5, no duplicates, and usage limit is not exceeded
+    if (selectedPlayers[day].length < 5 && !selectedPlayers[day].includes(playerName) && playerUsages[playerName] > 0) {
+        selectedPlayers[day].push(playerName);
+        playerUsages[playerName]--; // Decrement the remaining usage count
+
+        // Update only the specific player's usage cell in the table
+        const playerRow = document.querySelector(`#csvTable tbody tr[data-player="${playerName}"]`);
+        if (playerRow) {
+            const usageCell = playerRow.querySelector(".usage-cell");
+            if (usageCell) {
+                usageCell.textContent = playerUsages[playerName]; // Update the usage display
+            }
+        }
+
+        updateSelectedPlayersDisplay(); // Refresh the display for all selected players
+    } else if (selectedPlayers[day].includes(playerName)) {
+        alert(`${playerName} is already selected for Day ${day}.`);
+    } else if (playerUsages[playerName] <= 0) {
+        alert(`${playerName} has no remaining uses.`);
+    }
+}
+
+
+
+async function updateTableForSelectedDay(data = window.filteredData) {
+    if (!data) {
+        console.error("No data available for table update.");
+        return;
+    }
+
+    const selectedDay = document.getElementById("daySelect").value;
+    updateSelectedPlayersDisplay(); // Display selected players for all days
+
+    const dayKey = `Day ${selectedDay}`;
+    const thresholdData = thresholds[dayKey];
+
+    if (!thresholdData) {
+        document.getElementById("thresholdDisplay").innerText = "No thresholds available for this day.";
+        return;
+    }
+
+    // Fetch NBA games for the selected day to get the list of teams playing
+    const gamesData = await fetchNBAGamesData();
+    const teamsPlayingToday = gamesData[dayKey] || [];
+
+    // Display threshold information for the selected day
+    document.getElementById("thresholdDisplay").innerHTML = `<h3>Thresholds for ${dayKey}</h3>` +
+        Object.entries(thresholdData).map(([stat, value]) => `<p>${stat}: ${value}</p>`).join("");
+
+    // Only auto-sort by primary stat if no user-triggered sort is in effect
+    if (!userTriggeredSort) {
+        const primaryStat = Object.keys(thresholdData)[0];
+        const primaryStatKey = statMapping[primaryStat] || primaryStat.toLowerCase().replace(/\s/g, "");
+
+        window.filteredData = data.sort((a, b) => {
+            const playerProjA = projections.find(proj => proj.fixedPlayerName === a.playerName);
+            const playerProjB = projections.find(proj => proj.fixedPlayerName === b.playerName);
+
+            const valueA = playerProjA ? parseFloat(playerProjA[primaryStatKey]) || 0 : 0;
+            const valueB = playerProjB ? parseFloat(playerProjB[primaryStatKey]) || 0 : 0;
+
+            return valueB - valueA; // Descending order by default
+        });
+
+        console.log("Auto-sorted data for primary stat:", primaryStatKey, window.filteredData);
+    }
+
+    // Prepare headers: always-visible columns + relevant stats for the day
+    const headers = [
+        { name: "Player Name", key: "playerName" },
+        { name: "Highest Tier", key: "tier" },
+        { name: "Number of Uses", key: "uses" },
+        { name: "Team", key: "team" },
+        { name: "Minutes", key: "minutes" },
+        { name: "Injuries", key: "injuries" } // Ensure injuries is correctly displayed
+    ];
+
+    // Add dynamic columns based on the day’s stats
+    Object.keys(thresholdData).forEach(stat => {
+        const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+        headers.push({ name: stat, key: statKey, sortable: true });
+    });
+
+    // Generate table headers with a "Sort by" button for threshold stats
+    const tableHeaderRow = document.getElementById("tableHeaders");
+    tableHeaderRow.innerHTML = headers.map(header => {
+        if (header.sortable) {
+            return `<th>${header.name} 
+                        <button onclick="sortTableByStat('${header.key}')">Sort by ${header.name}</button>
+                    </th>`;
+        }
+        return `<th>${header.name}</th>`;
+    }).join("");
+
+    // Add a "Sort by Combined Stats" button if two stats are available
+    const combinedSortButton = document.getElementById("combinedStatsButton");
+    if (Object.keys(thresholdData).length === 2) {
+        combinedSortButton.style.display = "block";
+        combinedSortButton.onclick = () => sortTableByCombinedStats(thresholdData);
+    } else {
+        combinedSortButton.style.display = "none"; // Hide button if not applicable
+    }
+
+    // Filter data to show only players whose teams are playing today
+    const filteredDataForTeamsPlaying = data.filter(entry => {
+        const playerTeam = projections.find(proj => proj.fixedPlayerName === entry.playerName)?.team;
+        return teamsPlayingToday.includes(playerTeam);
+    });
+
+    // Display data with dynamic "Number of Uses" based on current playerUsages
+    const tbody = document.querySelector("#csvTable tbody");
+    tbody.innerHTML = ""; // Clear existing rows
+
+    filteredDataForTeamsPlaying.forEach(entry => {
+        const row = document.createElement("tr");
+        row.setAttribute("data-player", entry.playerName); // Add player identifier for direct access
+
+        const playerProjection = projections.find(proj => proj.fixedPlayerName === entry.playerName);
+        const isInjured = playerProjection?.injuries === "Y" ? "Y" : ""; // Handle injuries as text
+
+        if (isInjured) {
+            row.classList.add("injured-player");
+        }
+
+        headers.forEach(header => {
+            const cell = document.createElement("td");
+
+            if (header.key === "playerName") {
+                cell.textContent = entry.playerName;
+            } else if (header.key === "tier") {
+                cell.textContent = entry.tier;
+            } else if (header.key === "uses") {
+                cell.textContent = playerUsages[entry.playerName] || 0;
+                cell.classList.add("usage-cell"); // Add class for easy access to usage cell
+            } else if (header.key === "team") {
+                cell.textContent = playerProjection?.team || "";
+            } else if (header.key === "minutes") {
+                cell.textContent = playerProjection?.minutes !== undefined ? parseFloat(playerProjection.minutes).toFixed(2) : "";
+            } else if (header.key === "injuries") {
+                cell.textContent = isInjured; // Display the injury status as text
+            } else {
+                const statKey = statMapping[header.name] || header.key;
+                const value = playerProjection?.[statKey];
+                cell.textContent = value !== undefined ? parseFloat(value).toFixed(2) : "";
+            }
+
+            row.appendChild(cell);
+        });
+
+        // Add the selection button as before
+        const selectCell = document.createElement("td");
+        const selectButton = document.createElement("button");
+        selectButton.textContent = "Select";
+        selectButton.onclick = () => {
+            addPlayerToDay(selectedDay, entry.playerName);
+
+            if (isInjured) {
+                alert(`${entry.playerName} is currently injured.`);
+            }
+        };
+        selectCell.appendChild(selectButton);
+        row.appendChild(selectCell);
+
+        tbody.appendChild(row);
+    });
+
+    if (!userTriggeredSort) {
+        userTriggeredSort = false; // Reset only if auto-sorting was applied
+    }
+}
+
+
+
+function sortTableByCombinedStats(thresholdData) {
+    userTriggeredSort = true;  // Mark as user-initiated sort
+
+    const [statKey1, statKey2] = Object.keys(thresholdData).map(stat => statMapping[stat] || stat.toLowerCase().replace(/\s/g, ""));
+
+    window.filteredData = window.filteredData.sort((a, b) => {
+        const playerProjA = projections.find(proj => proj.fixedPlayerName === a.playerName);
+        const playerProjB = projections.find(proj => proj.fixedPlayerName === b.playerName);
+
+        const valueA1 = playerProjA ? playerProjA[statKey1] || 0 : 0;
+        const valueA2 = playerProjA ? playerProjA[statKey2] || 0 : 0;
+        const valueB1 = playerProjB ? playerProjB[statKey1] || 0 : 0;
+        const valueB2 = playerProjB ? playerProjB[statKey2] || 0 : 0;
+
+        const combinedValueA = valueA1 + valueA2;
+        const combinedValueB = valueB1 + valueB2;
+
+        return combinedValueB - combinedValueA; // Descending order
+    });
+
+    console.log("Sorted Data by Combined Stats:", window.filteredData);
+
+    // Refresh the table with the newly sorted data
+    updateTableForSelectedDay(window.filteredData);
+}
+
+
+let sortState = {};
+
+function sortTableByStat(statKey) {
+    userTriggeredSort = true; // Set flag to indicate user-triggered sort
+
+    // Toggle sorting order for the stat key
+    const currentOrder = sortState[statKey] || 'asc';
+    const newOrder = currentOrder === 'desc' ? 'asc' : 'desc';
+    sortState[statKey] = newOrder;
+
+    // Sort `filteredData` by the specified statKey
+    window.filteredData = window.filteredData.sort((a, b) => {
+        const playerProjA = projections.find(proj => proj.fixedPlayerName === a.playerName);
+        const playerProjB = projections.find(proj => proj.fixedPlayerName === b.playerName);
+
+        const valueA = playerProjA ? parseFloat(playerProjA[statKey]) || 0 : 0;
+        const valueB = playerProjB ? parseFloat(playerProjB[statKey]) || 0 : 0;
+
+        // Sort by the chosen order
+        return newOrder === 'asc' ? valueA - valueB : valueB - valueA;
+    });
+
+    console.log(`Sorted data by stat: ${statKey} in ${newOrder} order`);
+
+    // Refresh the table display after sorting
+    updateTableForSelectedDay(window.filteredData);
+}
+
+
+
+
+
+
+function displayAllThresholds() {
+    const allThresholdsDisplay = document.getElementById("allThresholdsDisplay");
+    let tableContent = '<table border="1"><tr>';
+    for (let i = 1; i <= 12; i++) tableContent += `<th>Day ${i}</th>`;
+    tableContent += `</tr><tr>`;
+
+    for (let i = 1; i <= 12; i++) {
+        const dayKey = `Day ${i}`;
+        const thresholdData = thresholds[dayKey] || {};
+        if (Object.keys(thresholdData).length === 2) {
+            const stats = Object.keys(thresholdData);
+            const values = Object.values(thresholdData);
+            tableContent += `<td><table style="width: 100%; border-collapse: collapse;">
+                <tr><td style="border-right: 1px solid;">${stats[0]}</td><td>${stats[1]}</td></tr>
+                <tr><td style="border-right: 1px solid;">${values[0]}</td><td>${values[1]}</td></tr>
+            </table></td>`;
+        } else {
+            const stat = Object.keys(thresholdData)[0] || 'No Stats';
+            const value = Object.values(thresholdData)[0] || 'N/A';
+            tableContent += `<td><div>${stat}</div><div>${value}</div></td>`;
+        }
+    }
+    tableContent += `</tr></table>`;
+    allThresholdsDisplay.innerHTML = tableContent;
+}
+
+function processTopShotData(csvData) {
+    const rows = csvData.split("\n").slice(1);
+    const playerData = {};
+
+    rows.forEach(row => {
+        const columns = row.split(",").map(cell => cell.replace(/^"|"$/g, "").trim());
+        const playerName = columns[1];
+        const tier = columns[5];
+
+        // Only keep the highest tier for each player
+        if (!playerData[playerName] || rarityOrder.indexOf(tier) < rarityOrder.indexOf(playerData[playerName].tier)) {
+            const team = projections.find(proj => proj.fixedPlayerName === playerName)?.team || ""; // Map team info from projections
+            const uses = usageMapping[tier] || 0; // Get allowed uses based on tier
+
+            playerData[playerName] = {
+                playerName,
+                tier,
+                team,  // Assign the team here
+                uses // Assign the allowed uses based on rarity
+            };
+        }
+    });
+
+    // Filter to include only players found in the active roster
+    const filteredData = Object.values(playerData).filter(entry => {
+        return activeRoster.some(rosterEntry => 
+            rosterEntry[1] === entry.playerName || rosterEntry[11] === entry.playerName
+        );
+    });
+
+    // Sort by number of uses in descending order
+    filteredData.sort((a, b) => (usageMapping[b.tier] || 0) - (usageMapping[a.tier] || 0));
+
+    window.filteredData = filteredData;
+
+
+
+    prepareAndDisplayData(filteredData);
+    updateTableForSelectedDay(filteredData);
+}
+
+
+
+function prepareAndDisplayData(filteredData, selectedDay = null) {
+    const dayKey = selectedDay ? `Day ${selectedDay}` : null;
+    const thresholdData = dayKey && thresholds[dayKey] ? thresholds[dayKey] : null;
+
+    const tbody = document.querySelector("#csvTable tbody");
+    tbody.innerHTML = ""; // Clear existing rows
+
+    // Define all columns, marking fixed ones to always display
+    const headers = [
+        { name: "Player Name", key: "playerName", alwaysVisible: true },
+        { name: "Highest Tier", key: "tier", alwaysVisible: true },
+        { name: "Number of Uses", key: "uses", alwaysVisible: true },
+        { name: "Team", key: "team", alwaysVisible: true },
+        { name: "Minutes", key: "minutes", alwaysVisible: true },
+        { name: "Injuries", key: "injuries", alwaysVisible: true },
+        { name: "Points", key: "points" },
+        { name: "Assists", key: "assists" },
+        { name: "Rebounds", key: "rebounds" },
+        { name: "Steals", key: "steals" },
+        { name: "Blocks", key: "blocks" },
+        { name: "Turnovers", key: "turnovers" },
+        { name: "Assists - Turnovers", key: "assists-turnovers" }, // New custom stat column
+        { name: "Field Goals Made", key: "fieldGoalsMade" },
+        { name: "Field Goals Attempted", key: "fieldGoalsAttempted" },
+        { name: "3s", key: "threePointAttempts" },
+        { name: "3s Attempted", key: "threePointAttempts" },
+        { name: "Free Throws Made", key: "freeThrowsMade" },
+        { name: "Free Throws Attempted", key: "freeThrowsAttempted" },
+        { name: "Offensive Rebounds", key: "offensiveRebounds" },
+        { name: "Defensive Rebounds", key: "defensiveRebounds" }
+    ];
+
+    // Determine which headers to display based on the selected day's thresholds
+    const visibleHeaders = headers.filter(header => 
+        header.alwaysVisible || (thresholdData && Object.keys(thresholdData).includes(header.name))
+    );
+
+    // Generate table headers
+    const tableHeaderRow = document.getElementById("tableHeaders");
+    tableHeaderRow.innerHTML = visibleHeaders.map(header => {
+        if (!header.alwaysVisible) {
+            // Add sort buttons for dynamic threshold stats
+            return `<th>${header.name}
+                    <button onclick="sortTableByStat('${header.key}', 'asc', '${selectedDay}')">Sort by</button>
+                </th>`;
+        }
+        return `<th>${header.name}</th>`;
+    }).join("");
+
+    filteredData.forEach(entry => {
+        const row = document.createElement("tr");
+
+        // Find player projection once and store it
+        const playerProjection = projections.find(proj => proj.fixedPlayerName === entry.playerName);
+        const isInjured = playerProjection?.injuries === "Y";
+
+        if (isInjured) {
+            row.classList.add("injured-player");
+        }
+
+        visibleHeaders.forEach(header => {
+            const cell = document.createElement("td");
+
+            if (header.key === "playerName") {
+                cell.textContent = entry.playerName;
+            } else if (header.key === "tier") {
+                cell.textContent = entry.tier;
+            } else if (header.key === "uses") {
+                cell.textContent = usageMapping[entry.tier] || 0;
+            } else if (header.key === "team") {
+                cell.textContent = playerProjection?.team || "";
+            } else if (header.key === "minutes") {
+                cell.textContent = playerProjection?.minutes !== undefined ? parseFloat(playerProjection.minutes).toFixed(2) : "";
+            } else if (header.key === "injuries") {
+                cell.textContent = playerProjection?.injuries || ""; // Display the injury status
+            } else {
+                const statKey = statMapping[header.name] || header.key;
+                const value = playerProjection?.[statKey];
+                cell.textContent = value !== undefined ? parseFloat(value).toFixed(2) : "";
+            }
+
+            cell.classList.add("stat-cell", `stat-${header.name.toLowerCase().replace(/\s/g, '')}`);
+            row.appendChild(cell);
+        });
+
+        // Add player selection button with injury check
+        const selectCell = document.createElement("td");
+        const selectButton = document.createElement("button");
+        selectButton.textContent = "Select";
+        selectButton.onclick = () => {
+            const day = document.getElementById("daySelect").value;
+            addPlayerToDay(day, entry.playerName);
+
+            // Show injury warning if applicable
+            if (playerProjection?.injuries === "Y") {
+                alert(`${entry.playerName} is currently injured.`);
+            }
+        };
+        selectCell.appendChild(selectButton);
+        row.appendChild(selectCell);
+
+
+        tbody.appendChild(row);
+    });
+}
+
+
+function handleOptimizeLineup() {
+    // Call optimizeLineup, then navigate to optimized_lineup.html
+    optimizeLineup().then(() => {
+        // After optimization, redirect to the results page
+        window.location.href = "optimized_lineup.html";
+    }).catch(error => {
+        console.error("Error during lineup optimization:", error);
+    });
+}
+
+
+async function optimizeLineup() {
+    window.allGamesData = await fetchNBAGamesData();
+    if (!window.allGamesData) {
+        console.error("Failed to load allGamesData.");
+        return;
+    }
+    
+    const allThresholds = await fetchThresholdsData();
+    const playerUsage = {};
+    const bestOverallLineup = [];
+
+    for (let day = 1; day <= 12; day++) {
+        const dayKey = `Day ${day}`;
+        const thresholds = allThresholds[dayKey];
+        const teamsPlaying = window.allGamesData[dayKey] || [];
+
+        let eligiblePlayers = window.filteredData.filter(player => 
+            teamsPlaying.includes(player.team) && 
+            (playerUsage[player.playerName] || 0) < player.uses
+        );
+
+        eligiblePlayers.forEach(player => {
+            if (!playerUsage[player.playerName]) {
+                playerUsage[player.playerName] = 0;
+            }
+        });
+
+        // Filter out stats that are missing for all eligible players
+        const applicableThresholds = {};
+        Object.keys(thresholds).forEach(stat => {
+            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+            const hasStat = eligiblePlayers.some(player => getPlayerStat(player, statKey) !== null);
+            if (hasStat) {
+                applicableThresholds[stat] = thresholds[stat];
+            } else {
+                console.warn(`Stat "${stat}" is missing for all players on Day ${day}. Skipping this stat.`);
+            }
+        });
+
+        const dayLineup = findOptimalLineupForDay(eligiblePlayers, applicableThresholds, playerUsage);
+
+        if (dayLineup.lineup.length > 0 && dayLineup.meetsThresholds) {
+            bestOverallLineup.push({
+                day: dayKey,
+                players: dayLineup.lineup.map(player => ({
+                    playerName: player.playerName,
+                    stats: Object.keys(applicableThresholds).reduce((acc, stat) => {
+                        const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+                        acc[stat] = getPlayerStat(player, statKey) || 0;
+                        return acc;
+                    }, {})
+                })),
+                thresholds: applicableThresholds
+            });
+
+            dayLineup.lineup.forEach(player => {
+                playerUsage[player.playerName] += 1;
+            });
+        } else {
+            console.warn(`Day ${day}: No valid lineup meets the thresholds. Using closest lineup.`);
+        }
+    }
+
+    if (bestOverallLineup.length > 0) {
+        console.log(`Optimized lineup created with ${bestOverallLineup.length} days.`);
+        localStorage.setItem("optimizedLineupResults", JSON.stringify(bestOverallLineup));
+        window.location.href = "optimized_lineup.html";
+    } else {
+        console.error("No valid lineups generated.");
+    }
+}
+
+
+
+function findOptimalLineupForDay(eligiblePlayers, thresholds, playerUsage) {
+    const topCandidates = eligiblePlayers.sort((a, b) => 
+        calculatePointsAboveThreshold(b, thresholds) - calculatePointsAboveThreshold(a, thresholds)
+    ).slice(0, 20); // Limit to top 20 candidates for efficiency
+
+    const bestLineup = getBestLineupCombination(topCandidates, thresholds, playerUsage);
+    return bestLineup;
+}
+
+
+
+// Updated getBestLineupCombination function to calculate lineup stats before threshold check
+function getBestLineupCombination(candidates, thresholds, playerUsage) {
+    let bestLineup = [];
+    let bestExcess = -Infinity;
+
+    // Generate all potential 5-player combinations from the candidates
+    const combinations = generatePotentialLineupsForDay(candidates, 5);
+
+    combinations.forEach(lineup => {
+        const lineupStats = calculateLineupStats(lineup);
+
+        // Skip stats that are zero across all players
+        const relevantThresholds = {};
+        Object.keys(thresholds).forEach(stat => {
+            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+            const statValueExists = lineup.some(player => getPlayerStat(player, statKey) > 0);
+
+            if (statValueExists) {
+                relevantThresholds[stat] = thresholds[stat];
+            } else {
+                console.log(`Skipping stat ${stat} for lineup threshold check due to zero values.`);
+            }
+        });
+
+        const meetsThresholds = Object.keys(relevantThresholds).every(stat => {
+            const threshold = relevantThresholds[stat];
+            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+            const lineupStat = lineupStats[statKey] || 0;
+
+            return lineupStat >= threshold;
+        });
+
+        if (meetsThresholds) {
+            const excessPoints = calculatePointsAboveThreshold(lineupStats, thresholds);
+            if (excessPoints > bestExcess) {
+                bestExcess = excessPoints;
+                bestLineup = lineup;
+            }
+        }
+    });
+
+    // If no lineup meets thresholds, select the lineup closest to the threshold
+    if (bestLineup.length === 0) {
+        bestLineup = getClosestLineup(combinations, thresholds);
+    }
+
+    return { lineup: bestLineup, meetsThresholds: bestLineup.length > 0 };
+}
+
+
+
+function getClosestLineup(combinations, thresholds) {
+    let closestLineup = [];
+    let smallestDeficit = Infinity;
+
+    combinations.forEach(lineup => {
+        const lineupStats = calculateLineupStats(lineup);
+        let totalDeficit = 0;
+
+        Object.keys(thresholds).forEach(stat => {
+            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+            const threshold = thresholds[stat];
+            const lineupStat = lineupStats[statKey] || 0;
+
+            if (lineupStat < threshold) {
+                totalDeficit += threshold - lineupStat;
+            }
+        });
+
+        if (totalDeficit < smallestDeficit) {
+            smallestDeficit = totalDeficit;
+            closestLineup = lineup;
+        }
+    });
+
+    console.log("Selected closest lineup with total deficit:", smallestDeficit);
+    return closestLineup;
+}
+
+
+
+// Updated calculatePointsAboveThreshold function
+function calculatePointsAboveThreshold(lineupStats, thresholds) {
+    let totalPointsAboveThreshold = 0;
+
+    Object.keys(thresholds).forEach(stat => {
+        const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+        const lineupStatValue = lineupStats[statKey] || 0;
+        const thresholdValue = thresholds[stat] || 0;
+
+        // Only add points if the lineup's stat exceeds the threshold
+        if (lineupStatValue > thresholdValue) {
+            totalPointsAboveThreshold += lineupStatValue - thresholdValue;
+        }
+    });
+
+    return totalPointsAboveThreshold;
+}
+
+// Function to calculate cumulative stats for a lineup
+function calculateLineupStats(lineup) {
+    const lineupStats = {};
+
+    lineup.forEach(player => {
+        Object.keys(statMapping).forEach(stat => {
+            const statKey = getMappedKey(stat);
+            const playerStatValue = getPlayerStat(player, statKey) || 0;
+
+            lineupStats[statKey] = (lineupStats[statKey] || 0) + playerStatValue;
+
+        });
+    });
+
+    return lineupStats;
+}
+
+
+
+// Helper function to generate top potential lineups for each day
+function generatePotentialLineupsForDay(eligiblePlayers, numPlayers) {
+    const potentialLineups = [];
+
+    for (let i = 0; i < eligiblePlayers.length - 4; i++) {
+        for (let j = i + 1; j < eligiblePlayers.length - 3; j++) {
+            for (let k = j + 1; k < eligiblePlayers.length - 2; k++) {
+                for (let l = k + 1; l < eligiblePlayers.length - 1; l++) {
+                    for (let m = l + 1; m < eligiblePlayers.length; m++) {
+                        const lineup = [
+                            eligiblePlayers[i],
+                            eligiblePlayers[j],
+                            eligiblePlayers[k],
+                            eligiblePlayers[l],
+                            eligiblePlayers[m]
+                        ];
+
+                        potentialLineups.push(lineup);
+                    }
+                }
+            }
+        }
+    }
+
+    return potentialLineups;
+}
+
+
+
+
+function getPlayerStat(player, stat) {
+    const statKey = getMappedKey(stat);
+    const playerProjection = projections.find(proj => proj.fixedPlayerName === player.playerName);
+    
+    if (playerProjection) {
+        const statValue = playerProjection[statKey];
+        return statValue !== undefined ? parseFloat(statValue) : 0;
+    } else {
+        return 0;
+    }
+}
+
+
+
+
+    function displayOptimizedLineupResults(results) {
+        const container = document.getElementById("optimizedLineupContainer");
+        const resultsDiv = document.getElementById("optimizedLineupResults");
+        resultsDiv.innerHTML = "";
+
+        results.forEach(dayResult => {
+            const dayDiv = document.createElement("div");
+            dayDiv.innerHTML = `<h3>${dayResult.day}</h3><p>Thresholds: ${JSON.stringify(dayResult.thresholds)}</p>`;
+
+            const playerList = document.createElement("ul");
+            let totalStats = {};
+
+            dayResult.players.forEach(player => {
+                const playerItem = document.createElement("li");
+                const playerStats = {};
+
+                Object.keys(dayResult.thresholds).forEach(stat => {
+                    const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+                    const statValue = getPlayerStat(player, statKey) || 0;
+                    playerStats[stat] = parseFloat(statValue).toFixed(2);
+
+                    totalStats[stat] = parseFloat((parseFloat(totalStats[stat] || 0) + statValue).toFixed(2));
+                });
+
+                playerItem.textContent = `${player.playerName} - Stats: ${JSON.stringify(playerStats)}`;
+                playerList.appendChild(playerItem);
+            });
+
+            Object.keys(totalStats).forEach(stat => {
+                totalStats[stat] = parseFloat(totalStats[stat]).toFixed(2);
+            });
+
+            const totalStatsItem = document.createElement("p");
+            totalStatsItem.textContent = `Total Stats for Day: ${JSON.stringify(totalStats)}`;
+            dayDiv.appendChild(totalStatsItem);
+
+            dayDiv.appendChild(playerList);
+            resultsDiv.appendChild(dayDiv);
+        });
+
+        container.style.display = "block";
+    }
+
+
+
+
+
+
+
+// File processing function
+async function processFiles() {
+    await fetchRosterData();
+    await fetchProjectionsData();
+
+    const topShotInput = document.getElementById('csvFileInput').files[0];
+    if (!topShotInput) {
+        alert("Please upload the NBA Top Shot CSV file.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        processTopShotData(e.target.result); // Call processTopShotData directly
+        initializePlayerUsages();
+    };
+    reader.readAsText(topShotInput);
+}
+
+// Initialize page with default data
+window.onload = async function() {
+    const selectedDay = 1;
+    await fetchThresholdsData();
+    const gamesData = await fetchNBAGamesData(); // Fetch NBA games data
+    await displayNBAGames(gamesData, selectedDay); // Display games for Day 1 on load
+    initializeDaysHeaders(); // Set up day headers and clear buttons
+    updateSelectedPlayersDisplay(); // Display selected players for all days
+    updateTableForSelectedDay(window.filteredData);
+};
+
+</script>
+
+</body>
+</html>
