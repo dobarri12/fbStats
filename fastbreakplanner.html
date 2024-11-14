@@ -267,6 +267,80 @@
                 }
             }
 
+            /* Green Header Styling for allThresholdsDisplay and selectedPlayersTable */
+            #allThresholdsDisplay th, #selectedPlayersTable th {
+                background-color: #3eff2c;
+                color: #0b1392;
+                font-weight: bold;
+            }
+
+            /* Remove hover effect on rows in allThresholdsDisplay table */
+            #allThresholdsDisplay tbody tr:hover {
+                background-color: initial;
+                color: initial;
+                font-family: 'Roboto Condensed', sans-serif;
+            }
+
+            #allThresholdsDisplay {
+                max-width: 100%; /* Ensure it doesn’t exceed page width */
+                margin: 0 auto;
+                padding: 10px;
+            }
+
+            #allThresholdsDisplay table {
+                width: 95%; /* Ensure table does not extend beyond page bounds */
+                border-collapse: collapse;
+                font-size: 0.9em; /* Smaller font for compact layout */
+                margin: 0 auto; /* Center the table */
+            }
+
+            #allThresholdsDisplay th, #allThresholdsDisplay td {
+                padding: 8px; /* Adjust padding */
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            /* Style for injured players in csvTable */
+            #csvTable .injured-player td {
+                background-color: #ff4d4d; /* Red background for injured players */
+                color: #ffffff; /* White text for contrast */
+            }
+
+            .upload-info {
+                font-family: 'Roboto Condensed', sans-serif;
+                font-size: 0.9em;
+                color: #ffffff;
+                background-color: #0b1392;
+                padding: 10px;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            .upload-info a {
+                color: #3eff2c;
+                text-decoration: underline;
+            }
+
+            /* Donate button styling */
+            #donate-button {
+                display: inline-block;
+                color: #0b1392;
+                background-color: #3eff2c;
+                font-size: 1.2em;
+                padding: 10px 20px;
+                margin-bottom: 15px;
+                text-decoration: none;
+                font-family: 'Roboto Condensed', sans-serif;
+                font-weight: bold;
+                border-radius: 5px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            #donate-button:hover {
+                background-color: #ffffff;
+                color: #0b1392;
+            }
 
         </style>
     
@@ -274,12 +348,18 @@
 </head>
 <body>
 
-<h1>Fast Break Projections</h1>
+<h1>Fast Break Run Planner</h1>
 
 
 
 <!-- Section to display all days and their thresholds in a table format -->
 <h2 class="section-title">NBA Fast Break Run 3 Thresholds</h2>
+
+<!-- Donate button -->
+<div style="text-align: center;">
+    <a id="donate-button" href="https://buymeacoffee.com/stats2cash" target="_blank">Donate if you Enjoy!</a>
+</div>
+
 <div id="allThresholdsDisplay" style="margin-bottom: 20px;"></div>
 
 <div id="selectedPlayersTable" style="margin-top: 20px;">
@@ -324,6 +404,11 @@
 
 <!-- Section to display the stat thresholds for the selected day -->
 <div id="thresholdDisplay"></div>
+
+<div class="upload-info">
+    Upload your OTM Moments Page CSV file here. This can be found at 
+    <a href="https://www.otmnft.com/nbatopshot/collection/moments" target="_blank">https://www.otmnft.com/nbatopshot/collection/moments</a>
+</div>
 
 <!-- File upload input for Top Shot Moments -->
 <div class="file-upload-container">
@@ -1021,28 +1106,39 @@ function sortTableByStat(statKey) {
 function displayAllThresholds() {
     const allThresholdsDisplay = document.getElementById("allThresholdsDisplay");
     let tableContent = '<table border="1"><tr>';
-    for (let i = 1; i <= 12; i++) tableContent += `<th>Day ${i}</th>`;
+
+    // Header row for days
+    for (let i = 1; i <= 12; i++) {
+        tableContent += `<th>Day ${i}</th>`;
+    }
     tableContent += `</tr><tr>`;
 
+    // Display each day's thresholds without inner tables
     for (let i = 1; i <= 12; i++) {
         const dayKey = `Day ${i}`;
         const thresholdData = thresholds[dayKey] || {};
+
         if (Object.keys(thresholdData).length === 2) {
-            const stats = Object.keys(thresholdData);
-            const values = Object.values(thresholdData);
-            tableContent += `<td><table style="width: 100%; border-collapse: collapse;">
-                <tr><td style="border-right: 1px solid;">${stats[0]}</td><td>${stats[1]}</td></tr>
-                <tr><td style="border-right: 1px solid;">${values[0]}</td><td>${values[1]}</td></tr>
-            </table></td>`;
+            // If there are two stats, display one above the other
+            const [stat1, stat2] = Object.keys(thresholdData);
+            const [value1, value2] = Object.values(thresholdData);
+            tableContent += `<td>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div><strong>${stat1}</strong>: ${value1}</div>
+                                    <div><strong>${stat2}</strong>: ${value2}</div>
+                                </div>
+                             </td>`;
         } else {
+            // Single stat case
             const stat = Object.keys(thresholdData)[0] || 'No Stats';
             const value = Object.values(thresholdData)[0] || 'N/A';
-            tableContent += `<td><div>${stat}</div><div>${value}</div></td>`;
+            tableContent += `<td><div><strong>${stat}</strong>: ${value}</div></td>`;
         }
     }
     tableContent += `</tr></table>`;
     allThresholdsDisplay.innerHTML = tableContent;
 }
+
 
 function processTopShotData(csvData) {
     const rows = csvData.split("\n").slice(1);
