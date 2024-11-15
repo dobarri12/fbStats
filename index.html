@@ -305,6 +305,19 @@
     </div>
     
     <script>
+
+        async function fetchPlayerImages() {
+        try {
+            const response = await fetch("https://script.google.com/macros/s/AKfycby7zAtEiJuhuq8Y3cRbNDV4RBRSdecz66YtvyjrkzcGG6rdW6eIHYdzLEkZe3y8fpsP/exec");
+            if (!response.ok) throw new Error("Failed to fetch player images");
+            const playerImages = await response.json();
+            return playerImages;
+        } catch (error) {
+            console.error("Error fetching player images:", error);
+            return {};
+        }
+        }
+
         async function getTopPlayers() {
             let stat1 = "threePointers";
             let stat2 = "";
@@ -324,6 +337,9 @@
                 const response = await fetch("https://script.google.com/macros/s/AKfycbzhPpOEDL4Wpz-EZSIbJYPEy0tGXC7p-P-VTinHHCxnDF-0qQ6dx3f3B2Uw1pfNMZRD/exec");
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
+
+                // Fetch player images
+                const playerImages = await fetchPlayerImages();
 
                 const filteredData = data.filter(player => player.playerName && player.playerName !== "Totals" && player.playerName !== "Name");
 
@@ -364,6 +380,7 @@
                 // Set headers for the players table dynamically
                 const playersTableHeaders = document.getElementById('playersTableHeaders');
                 playersTableHeaders.innerHTML = `
+                    <th>Player Image</th>
                     <th>Player Name</th>
                     <th>Team</th>
                     <th>${stat1 === "freeThrowsMade" ? "Free Throws Made" : stat1.charAt(0).toUpperCase() + stat1.slice(1)}</th>
@@ -378,28 +395,40 @@
                 // Populate rows based on available stats
                 sortedData.forEach(player => {
                     const row = tableBody.insertRow();
-                    row.insertCell(0).textContent = player.playerName;
-                    row.insertCell(1).textContent = player.team;
+
+                    
+                    // Player Image
+                    const imageCell = row.insertCell(0);
+                    const img = document.createElement("img");
+                    img.src = playerImages[player.playerName] || "https://i.imgur.com/8tzEmzU.png";
+                    img.alt = player.playerName;
+                    img.style.width = "50px";
+                    img.style.height = "50px";
+                    imageCell.appendChild(img);
+
+
+                    row.insertCell(1).textContent = player.playerName;
+                    row.insertCell(2).textContent = player.team;
 
                     const stat1Value = parseFloat(player[stat1] || 0).toFixed(0);
                     const stat2Value = stat2 === "foulsDrawn" ? "Do not have Stat Data" : parseFloat(player[stat2] || 0).toFixed(0);
                     const combinedTotal = stat2 === "foulsDrawn" ? stat1Value : (parseFloat(stat1Value) + parseFloat(stat2Value)).toFixed(0);
 
 
-                    row.insertCell(2).textContent = stat1Value;
-                    if (stat2) row.insertCell(3).textContent = stat2Value === "Do not have Stat Data" ? stat2Value : stat2Value;
-                    row.insertCell(stat2 ? 4 : 3).textContent = combinedTotal;
+                    row.insertCell(3).textContent = stat1Value;
+                    if (stat2) row.insertCell(4).textContent = stat2Value === "Do not have Stat Data" ? stat2Value : stat2Value;
+                    row.insertCell(stat2 ? 5 : 4).textContent = combinedTotal;
 
                     const stat1Percent = Math.min((stat1Value / threshold1) * 100, 100);
-                    row.insertCell(stat2 ? 5 : 4).textContent = `${stat1Percent.toFixed(2)}%`;
+                    row.insertCell(stat2 ? 6 :5).textContent = `${stat1Percent.toFixed(2)}%`;
 
                     if (stat2) {
                         const stat2Percent = stat2Value === "Do not have Stat Data" ? "N/A" : Math.min((stat2Value / threshold2) * 100, 100).toFixed(2) + "%";
-                        row.insertCell(6).textContent = stat2Percent;
+                        row.insertCell(7).textContent = stat2Percent;
                     }
 
                     const combinedThresholdPercent = stat2 === "foulsDrawn" ? stat1Percent : (combinedTotal / (threshold1 + (threshold2 || 0))) * 100;
-                    row.insertCell(stat2 ? 7 : 5).textContent = `${combinedThresholdPercent.toFixed(2)}%`;
+                    row.insertCell(stat2 ? 8 : 6).textContent = `${combinedThresholdPercent.toFixed(2)}%`;
 
                     const progressBars = document.createElement('div');
                     progressBars.className = 'progress-bars';
@@ -439,7 +468,7 @@
                         progressBars.appendChild(stat2Label);
                     }
 
-                    row.insertCell(stat2 ? 8 : 6).appendChild(progressBars);
+                    row.insertCell(stat2 ? 9 : 7).appendChild(progressBars);
                 });
 
     
@@ -486,8 +515,7 @@
                     <th>${stat1 === "freeThrowsMade" ? "Free Throws Made" : stat1.charAt(0).toUpperCase() + stat1.slice(1)}</th>
                     ${stat2 ? `<th>${stat2.charAt(0).toUpperCase() + stat2.slice(1)}</th>` : ""}
                 `;
-    
-                // Display the top lineup in the lineup table
+
                 if (topLineup.length > 0) {
                     let totalStat1 = 0;
                     let totalStat2 = 0;
@@ -495,34 +523,40 @@
                     // Add each player to the lineup table and update total stats
                     topLineup.forEach(player => {
                         const row = document.createElement('tr');
+
+                        // Player name and image
                         const cellName = document.createElement('td');
+                        const img = document.createElement("img");
+                        img.src = playerImages[player.playerName] || "https://i.imgur.com/8tzEmzU.png";
+                        img.alt = player.playerName;
+                        img.style.width = "50px";
+                        img.style.height = "50px";
+                        cellName.appendChild(img);
+                        cellName.appendChild(document.createTextNode(` ${player.playerName}`));
+                        row.appendChild(cellName);
+
+                        // Stat1
                         const cellStat1 = document.createElement('td');
-                        const cellStat2 = stat2 ? document.createElement('td') : null;
-
-                        cellName.textContent = player.playerName;
-
-                        // Handle stat1 display and accumulate total
                         const stat1Value = stat1 === "foulsDrawn" ? "Do not have Stat Data" : parseFloat(player[stat1] || 0);
                         cellStat1.textContent = stat1Value;
                         if (stat1 !== "foulsDrawn") totalStat1 += stat1Value;
+                        row.appendChild(cellStat1);
 
-                        // Handle stat2 display and accumulate total, if applicable
-                        const stat2Value = stat2 === "foulsDrawn" ? "Do not have Stat Data" : parseFloat(player[stat2] || 0);
+                        // Stat2 (if applicable)
                         if (stat2) {
+                            const cellStat2 = document.createElement('td');
+                            const stat2Value = stat2 === "foulsDrawn" ? "Do not have Stat Data" : parseFloat(player[stat2] || 0);
                             cellStat2.textContent = stat2Value;
                             if (stat2 !== "foulsDrawn") totalStat2 += stat2Value;
+                            row.appendChild(cellStat2);
                         }
 
-                        // Append cells to the row and the row to the lineup table body
-                        row.appendChild(cellName);
-                        row.appendChild(cellStat1);
-                        if (stat2) row.appendChild(cellStat2);
                         lineupTableBody.appendChild(row);
                     });
 
                     // Update the totals row with summed stats or "N/A" if stat data is unavailable
-                    document.getElementById('total-stat1').textContent = stat1 === "foulsDrawn" ? "N/A" : totalStat1;
-                    document.getElementById('total-stat2').textContent = stat2 === "foulsDrawn" || !stat2 ? "N/A" : totalStat2;
+                    document.getElementById('total-stat1').textContent = stat1 === "foulsDrawn" ? "N/A" : totalStat1.toFixed(0);
+                    document.getElementById('total-stat2').textContent = stat2 === "foulsDrawn" || !stat2 ? "N/A" : totalStat2.toFixed(0);
 
                 } else {
                     // If no lineup meets thresholds, show a message in the table
@@ -533,6 +567,12 @@
                     noLineupRow.appendChild(cellNoLineup);
                     lineupTableBody.appendChild(noLineupRow);
                 }
+
+
+
+
+
+
     
             } catch (error) {
                 console.error("Error fetching data:", error);
