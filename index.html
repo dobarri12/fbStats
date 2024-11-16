@@ -308,7 +308,7 @@
 
         async function fetchPlayerImages() {
         try {
-            const response = await fetch("https://script.google.com/macros/s/AKfycby7zAtEiJuhuq8Y3cRbNDV4RBRSdecz66YtvyjrkzcGG6rdW6eIHYdzLEkZe3y8fpsP/exec");
+            const response = await fetch("https://script.google.com/macros/s/AKfycbz6Damqeidu_e6MDgZfjisKEiYyoFymkmmjOIUMvmKWCh0RVtMLzLd_QrrP4HE1NR02/exec?type=images");
             if (!response.ok) throw new Error("Failed to fetch player images");
             const playerImages = await response.json();
             return playerImages;
@@ -320,7 +320,7 @@
 
         async function getTopPlayers() {
             let stat1 = "threePointers";
-            let stat2 = "";
+            let stat2 = "threePointAttempts";
             const threshold1 = 15;
             const threshold2 = stat2 ? 25 : 0;
 
@@ -334,7 +334,7 @@
             lineupTableBody.innerHTML = "";
 
             try {
-                const response = await fetch("https://script.google.com/macros/s/AKfycbzhPpOEDL4Wpz-EZSIbJYPEy0tGXC7p-P-VTinHHCxnDF-0qQ6dx3f3B2Uw1pfNMZRD/exec");
+                const response = await fetch("https://script.google.com/macros/s/AKfycbz6Damqeidu_e6MDgZfjisKEiYyoFymkmmjOIUMvmKWCh0RVtMLzLd_QrrP4HE1NR02/exec?type=data");
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
 
