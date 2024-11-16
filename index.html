@@ -261,8 +261,8 @@
     <a id="donate-button" href="fastbreakplanner.html">Go to Planner</a>
 
     <div id="statInfo">
-        <p><strong>Stat(s):</strong> Three Pointers Attempted and Three Pointers Made</p>
-        <p><strong>Threshold(s):</strong> Three Pointers Attempted: 25 , Three Pointers Made: 15</p>
+        <p><strong>Stat(s):</strong> Assists and Rebounds</p>
+        <p><strong>Threshold(s):</strong> Assists: 25 , Rebounds: 35</p>
     </div>
 
     <div id="top-lineup">
@@ -319,10 +319,10 @@
         }
 
         async function getTopPlayers() {
-            let stat1 = "threePointers";
-            let stat2 = "threePointAttempts";
-            const threshold1 = 15;
-            const threshold2 = stat2 ? 25 : 0;
+            let stat1 = "assists";
+            let stat2 = "rebounds";
+            const threshold1 = 25;
+            const threshold2 = stat2 ? 35 : 0;
 
             const loadingElement = document.getElementById('loading');
             const tableBody = document.getElementById('playersTable').getElementsByTagName('tbody')[0];
