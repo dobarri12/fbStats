@@ -261,8 +261,8 @@
     <a id="donate-button" href="fastbreakplanner.html">Go to Planner</a>
 
     <div id="statInfo">
-        <p><strong>Stat(s):</strong> Field Goals Made</p>
-        <p><strong>Threshold(s):</strong> Field Goals Made: 15</p>
+        <p><strong>Stat(s):</strong> Assists and Field Goals Attempted</p>
+        <p><strong>Threshold(s):</strong> Assists: 25 Field Goals Attempted: 25</p>
     </div>
 
     <div id="top-lineup">
@@ -347,10 +347,10 @@
 
 
         async function getTopPlayers() {
-            let stat1 = "fieldGoalsMade";
-            let stat2 = "";
-            const threshold1 = 40;
-            const threshold2 = stat2 ? 35 : 0;
+            let stat1 = "assists";
+            let stat2 = "fieldGoalAttempts";
+            const threshold1 = 25;
+            const threshold2 = stat2 ? 25 : 0;
 
             const loadingElement = document.getElementById('loading');
             const tableBody = document.getElementById('playersTable').getElementsByTagName('tbody')[0];
@@ -373,6 +373,12 @@
 
                 // Compute "Free Throws Made" and "Field Goals Made" based on percentages
                 filteredData.forEach(player => {
+
+                    player[stat1] = player[stat1] || 0; // Default to 0 if stat1 is undefined
+                    if (stat2) {
+                        player[stat2] = player[stat2] || 0; // Default to 0 if stat2 is undefined
+                    }
+
                     if (stat1 === "fieldGoalsMade") {
                         player[stat1] = player.fieldGoalAttempts && player.fieldGoalPercent
                             ? (player.fieldGoalAttempts * player.fieldGoalPercent).toFixed(0)
