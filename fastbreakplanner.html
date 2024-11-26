@@ -343,6 +343,44 @@
                 color: #0b1392;
             }
 
+            /* Center the Optimize Lineup button */
+            .optimize-lineup-container {
+                display: flex;
+                justify-content: center;
+                margin: 20px 0;
+            }
+
+            /* Style for the Optimize Lineup button */
+            .optimize-lineup-button {
+                font-family: 'Bebas Neue', sans-serif;
+                font-size: 24px; /* Larger font size */
+                background-color: #0b1392; /* Dark blue background */
+                color: #fff; /* White text */
+                border: 3px solid #3eff2c; /* Green border */
+                padding: 15px 30px; /* Larger padding */
+                cursor: pointer;
+                transition: background-color 0.3s ease, color 0.3s ease;
+                border-radius: 10px; /* Rounded corners */
+            }
+
+            /* Hover effect for the button */
+            .optimize-lineup-button:hover {
+                background-color: #3eff2c; /* Green background */
+                color: #0b1392; /* Dark blue text */
+            }
+
+            #loadingCollection, #loadingOptimization {
+                font-family: 'Roboto Condensed', sans-serif;
+                font-size: 20px;
+                font-weight: bold;
+                color: #3eff2c;
+                background-color: #0b1392;
+                padding: 10px;
+                border-radius: 5px;
+                width: 100%;
+            }
+
+
         </style>
     
     <title>Fast Break Projections</title>
@@ -354,7 +392,26 @@
 
 
 <!-- Section to display all days and their thresholds in a table format -->
-<h2 class="section-title">NBA Fast Break Run 3 Thresholds</h2>
+<h2 class="section-title">NBA Fast Break Run 4</h2>
+
+<div id="premiumInfo" style="text-align: center; margin-top: 20px;">
+    <p style="color: white; font-size: 20px; margin-bottom: 10px;">
+        Purchase premium access for just $15 a run to unlock the "Optimize Lineup" feature that optimizes your available players across the run for maximum wins!
+    </p>
+    <button onclick="purchasePremium()" style="background-color: #3eff2c; color: #0b1392; font-family: 'Bebas Neue'; padding: 10px 20px; border: none; border-radius: 5px; font-size: 20px; margin-bottom: 20px;">
+        Purchase Premium
+    </button>
+</div>
+
+<div id="loginContainer" style="text-align: center; margin-top: 20px;">
+    <p style="color: white; font-size: 18px;">Enter your access code to unlock premium features:</p>
+    <input id="accessCodeInput" type="password" placeholder="Enter access code" style="padding: 10px; font-size: 16px;">
+    <button onclick="verifyAccessCode()" style="background-color: #3eff2c; color: #0b1392; font-family: 'Bebas Neue'; padding: 10px 20px; border: none; border-radius: 5px; font-size: 20px;">
+        Submit
+    </button>
+    <p id="loginError" style="color: red; display: none;">Incorrect access code. Please try again or contact support.</p>
+</div>
+
 
 <!-- Donate button -->
 <div style="text-align: center;">
@@ -382,6 +439,9 @@
 
 <button id="downloadRunPlanButton" style="display: none;" onclick="downloadRunPlan()">Download Run Plan</button>
 
+<div id="loadingOptimization" style="display: none; text-align: center; color: white; font-size: 18px; margin-top: 20px;">
+    Loading Optimized Lineups...
+</div>
 
 <!-- Section to display NBA games for the selected day -->
 <h2 class="section-title">NBA Games for Selected Day</h2>
@@ -402,7 +462,7 @@
     <option value="9">Day 9</option>
     <option value="10">Day 10</option>
     <option value="11">Day 11</option>
-    <option value="12">Day 12</option>
+    <!-- <option value="12">Day 12</option> -->
 </select>
 
 
@@ -421,13 +481,18 @@
     <button onclick="processFiles()">Upload</button>
 </div>
 
+<div class="optimize-lineup-container" style="display: none;">
+    <button class="optimize-lineup-button" onclick="optimizeLineup()">Optimize Lineup</button>
+</div>
+
 <div class="centered-button">
     <button id="combinedStatsButton" style="display: none;">Sort by Combined Stats</button>
 </div>
 
+<div id="loadingCollection" style="display: none; text-align: center; color: white; font-size: 18px; margin-top: 20px;">
+    Loading Collection...
+</div>
 
-<!-- Add the Optimize Lineup button -->
-<!--<button onclick="optimizeLineup()">Optimize Lineup</button> -->
 
 <!-- Table to display processed data -->
 <table id="csvTable" border="1">
@@ -445,6 +510,12 @@
 </style>
 
 <script>
+
+
+    function purchasePremium() {
+        window.open("https://buymeacoffee.com/stats2cash/e/336546", "_blank"); // Opens the link in a new tab
+    }
+
 
     let userTriggeredSort = false;
 
@@ -473,11 +544,13 @@ const statMapping = {
     "Free Throws Made": "freeThrowsMade",
     "Free Throws Attempted": "freeThrowsAttempted",
     "Offensive Rebounds": "offensiveRebounds",
-    "Defensive Rebounds": "defensiveRebounds"
+    "Defensive Rebounds": "defensiveRebounds",
+    "Points In The Paint": "pitp",
+    "Plus Minus": "plusMinus"
 };
 
 
-const rarityOrder = ['Legendary', 'Rare', 'Common', 'Fandom'];
+const rarityOrder = ['Legendary', 'Rare', 'Anthology', 'Common', 'Fandom'];
 const usageMapping = {
     'Common': 1,
     'Fandom': 1,
@@ -497,7 +570,7 @@ let thresholds = {};
 
 
 function isRunPlanComplete() {
-    for (let day = 1; day <= 12; day++) {
+    for (let day = 1; day <= 11; day++) {
         if (!selectedPlayers[day] || selectedPlayers[day].length < 5) {
             return false; // If any day has fewer than 5 players, the plan isn't complete
         }
@@ -560,7 +633,9 @@ async function fetchProjectionsData() {
             freeThrowPercentage: row.freeThrowPercentage,
             offensiveRebounds: row.offensiveRebounds,
             defensiveRebounds: row.defensiveRebounds,
-            injuries: row.injuries
+            injuries: row.injuries,
+            plusMinus: row.plusMinus,
+            pitp: row.pitp
         }));
 
         // Store the projections in localStorage
@@ -672,7 +747,7 @@ function initializeDaysHeaders() {
     headerRow.innerHTML = ""; // Clear any existing headers
     clearButtonsRow.innerHTML = ""; // Clear any existing clear buttons
 
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 11; i++) {
         // Add day headers
         const th = document.createElement("th");
         th.textContent = `Day ${i}`;
@@ -720,7 +795,7 @@ function downloadRunPlan() {
     ];
 
     // Populate rows with player selections per day
-    for (let day = 1; day <= 12; day++) {
+    for (let day = 1; day <= 11; day++) {
         selectedPlayers[day].forEach((playerName, index) => {
             rows[index].push(playerName);
         });
@@ -744,24 +819,29 @@ function downloadRunPlan() {
 
 
 
-function updateSelectedPlayersDisplay() {
+function updateSelectedPlayersDisplay(optimizedPlayers = null) {
     const selectedPlayersContainer = document.getElementById("selectedPlayersTable");
     if (!selectedPlayersContainer) {
         console.error("Container element 'selectedPlayersTable' not found in the HTML.");
         return;
     }
+
     selectedPlayersContainer.innerHTML = ""; // Clear previous content
+
+    // Use optimizedPlayers if provided, otherwise fallback to user-selected lineups
+    const playersToDisplay = optimizedPlayers || selectedPlayers;
 
     // Style the container to use flexbox for aligning tables in a row
     selectedPlayersContainer.style.display = "flex";
     selectedPlayersContainer.style.flexWrap = "wrap";
     selectedPlayersContainer.style.gap = "20px";
 
-    for (let day = 1; day <= 12; day++) {
+    for (let day = 1; day <= 11; day++) {
         const dayKey = `Day ${day}`;
         const thresholdData = thresholds[dayKey];
         const statKeys = Object.keys(thresholdData).map(stat => statMapping[stat] || stat.toLowerCase().replace(/\s/g, ""));
         const statNames = Object.keys(thresholdData);
+        const dayLineup = playersToDisplay[day] || [];
 
         // Create a container for each day's table
         const daySection = document.createElement("div");
@@ -793,7 +873,7 @@ function updateSelectedPlayersDisplay() {
 
         // Rows for each selected player
         let currentTotals = Array(statNames.length).fill(0);
-        (selectedPlayers[day] || []).forEach(playerName => {
+        dayLineup.forEach(playerName => {
             const row = document.createElement("tr");
             const playerCell = document.createElement("td");
             playerCell.textContent = playerName;
@@ -858,6 +938,7 @@ function updateSelectedPlayersDisplay() {
         // Append day section to the main container
         selectedPlayersContainer.appendChild(daySection);
 
+        // Display or hide the "Download Run Plan" button based on completeness
         const downloadButton = document.getElementById("downloadRunPlanButton");
         if (isRunPlanComplete()) {
             downloadButton.style.display = "block";
@@ -865,6 +946,63 @@ function updateSelectedPlayersDisplay() {
             downloadButton.style.display = "none";
         }
     }
+}
+
+const ACCESS_CODE = 'Q9LIFBP77'; // Replace with your actual access code
+
+function verifyAccessCode() {
+    const enteredCode = document.getElementById('accessCodeInput').value.trim();
+
+    if (enteredCode === ACCESS_CODE) {
+        localStorage.setItem('premiumUser', 'true'); // Save premium status locally
+        alert('Access granted! Premium features unlocked.');
+        updateOptimizeButtonDisplay();
+        document.getElementById('loginContainer').style.display = 'none';
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+}
+
+function isPremiumUser() {
+    return localStorage.getItem('premiumUser') === 'true';
+}
+
+function updateOptimizeButtonDisplay() {
+    const optimizeButtonContainer = document.querySelector('.optimize-lineup-container');
+    const loginContainer = document.getElementById('loginContainer');
+
+    if (isPremiumUser()) {
+        optimizeButtonContainer.style.display = 'flex';
+        loginContainer.style.display = 'none';
+    } else {
+        optimizeButtonContainer.style.display = 'none';
+        loginContainer.style.display = 'block';
+    }
+}
+
+window.onload = function() {
+    updateOptimizeButtonDisplay();
+};
+
+
+function calculateFallbackScore(totalStats, thresholds) {
+    let score = 0;
+
+    Object.keys(thresholds).forEach(stat => {
+        const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+        const statValue = totalStats[statKey] || 0;
+        const thresholdValue = thresholds[stat] || 0;
+
+        if (statValue >= thresholdValue) {
+            // Award points for exceeding the threshold
+            score += statValue - thresholdValue;
+        } else {
+            // Penalize for falling short of the threshold
+            score -= (thresholdValue - statValue);
+        }
+    });
+
+    return score;
 }
 
 
@@ -1113,13 +1251,13 @@ function displayAllThresholds() {
     let tableContent = '<table border="1"><tr>';
 
     // Header row for days
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 11; i++) {
         tableContent += `<th>Day ${i}</th>`;
     }
     tableContent += `</tr><tr>`;
 
     // Display each day's thresholds without inner tables
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 11; i++) {
         const dayKey = `Day ${i}`;
         const thresholdData = thresholds[dayKey] || {};
 
@@ -1295,200 +1433,151 @@ function prepareAndDisplayData(filteredData, selectedDay = null) {
 }
 
 
-function handleOptimizeLineup() {
-    // Call optimizeLineup, then navigate to optimized_lineup.html
-    optimizeLineup().then(() => {
-        // After optimization, redirect to the results page
-        window.location.href = "optimized_lineup.html";
-    }).catch(error => {
-        console.error("Error during lineup optimization:", error);
-    });
-}
-
-
 async function optimizeLineup() {
-    window.allGamesData = await fetchNBAGamesData();
-    if (!window.allGamesData) {
-        console.error("Failed to load allGamesData.");
-        return;
-    }
-    
-    const allThresholds = await fetchThresholdsData();
-    const playerUsage = {};
-    const bestOverallLineup = [];
 
-    for (let day = 1; day <= 12; day++) {
-        const dayKey = `Day ${day}`;
-        const thresholds = allThresholds[dayKey];
-        const teamsPlaying = window.allGamesData[dayKey] || [];
+    const loadingOptimization = document.getElementById("loadingOptimization");
+    loadingOptimization.style.display = "block"; // Show loading message
 
-        let eligiblePlayers = window.filteredData.filter(player => 
-            teamsPlaying.includes(player.team) && 
-            (playerUsage[player.playerName] || 0) < player.uses
-        );
+    try {
+        const allGamesData = await fetchNBAGamesData();
+        const allThresholds = await fetchThresholdsData();
 
-        eligiblePlayers.forEach(player => {
-            if (!playerUsage[player.playerName]) {
-                playerUsage[player.playerName] = 0;
-            }
-        });
+        let playerUsage = {}; // Track player usage across all days
+        const selectedPlayers = {}; // Store the optimized lineup for each day
 
-        // Filter out stats that are missing for all eligible players
-        const applicableThresholds = {};
-        Object.keys(thresholds).forEach(stat => {
-            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
-            const hasStat = eligiblePlayers.some(player => getPlayerStat(player, statKey) !== null);
-            if (hasStat) {
-                applicableThresholds[stat] = thresholds[stat];
-            } else {
-                console.warn(`Stat "${stat}" is missing for all players on Day ${day}. Skipping this stat.`);
-            }
-        });
+        for (let day = 1; day <= 11; day++) {
+            const dayKey = `Day ${day}`;
+            const thresholds = allThresholds[dayKey];
+            const teamsPlaying = allGamesData[dayKey] || [];
 
-        const dayLineup = findOptimalLineupForDay(eligiblePlayers, applicableThresholds, playerUsage);
+            // Get eligible players for this day
+            const eligiblePlayers = window.filteredData.filter(player => 
+                teamsPlaying.includes(player.team) &&
+                (playerUsage[player.playerName] || 0) < player.uses
+            );
 
-        if (dayLineup.lineup.length > 0 && dayLineup.meetsThresholds) {
-            bestOverallLineup.push({
-                day: dayKey,
-                players: dayLineup.lineup.map(player => ({
-                    playerName: player.playerName,
-                    stats: Object.keys(applicableThresholds).reduce((acc, stat) => {
-                        const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
-                        acc[stat] = getPlayerStat(player, statKey) || 0;
-                        return acc;
-                    }, {})
-                })),
-                thresholds: applicableThresholds
+            // Find the best lineup for the day
+            const { lineup, meetsThresholds } = findOptimalLineupForDay(
+                eligiblePlayers, 
+                thresholds, 
+                playerUsage
+            );
+
+            // Save the optimized lineup for the day
+            selectedPlayers[day] = lineup.map(player => player.playerName);
+
+            // Update player usage counts
+            lineup.forEach(player => {
+                playerUsage[player.playerName] = (playerUsage[player.playerName] || 0) + 1;
             });
-
-            dayLineup.lineup.forEach(player => {
-                playerUsage[player.playerName] += 1;
-            });
-        } else {
-            console.warn(`Day ${day}: No valid lineup meets the thresholds. Using closest lineup.`);
         }
-    }
 
-    if (bestOverallLineup.length > 0) {
-        console.log(`Optimized lineup created with ${bestOverallLineup.length} days.`);
-        localStorage.setItem("optimizedLineupResults", JSON.stringify(bestOverallLineup));
-        window.location.href = "optimized_lineup.html";
-    } else {
-        console.error("No valid lineups generated.");
+        // Update the selectedPlayersTable display
+        updateSelectedPlayersDisplay(selectedPlayers);
+    } catch (error) {
+        console.error("Error optimizing lineup:", error);
+    } finally {
+        loadingOptimization.style.display = "none"; // Hide loading message
     }
 }
+
+
 
 
 
 function findOptimalLineupForDay(eligiblePlayers, thresholds, playerUsage) {
-    const topCandidates = eligiblePlayers.sort((a, b) => 
-        calculatePointsAboveThreshold(b, thresholds) - calculatePointsAboveThreshold(a, thresholds)
-    ).slice(0, 20); // Limit to top 20 candidates for efficiency
+    const lineup = [];
+    let currentTotals = {};
 
-    const bestLineup = getBestLineupCombination(topCandidates, thresholds, playerUsage);
-    return bestLineup;
-}
-
-
-
-// Updated getBestLineupCombination function to calculate lineup stats before threshold check
-function getBestLineupCombination(candidates, thresholds, playerUsage) {
-    let bestLineup = [];
-    let bestExcess = -Infinity;
-
-    // Generate all potential 5-player combinations from the candidates
-    const combinations = generatePotentialLineupsForDay(candidates, 5);
-
-    combinations.forEach(lineup => {
-        const lineupStats = calculateLineupStats(lineup);
-
-        // Skip stats that are zero across all players
-        const relevantThresholds = {};
-        Object.keys(thresholds).forEach(stat => {
-            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
-            const statValueExists = lineup.some(player => getPlayerStat(player, statKey) > 0);
-
-            if (statValueExists) {
-                relevantThresholds[stat] = thresholds[stat];
-            } else {
-                console.log(`Skipping stat ${stat} for lineup threshold check due to zero values.`);
-            }
-        });
-
-        const meetsThresholds = Object.keys(relevantThresholds).every(stat => {
-            const threshold = relevantThresholds[stat];
-            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
-            const lineupStat = lineupStats[statKey] || 0;
-
-            return lineupStat >= threshold;
-        });
-
-        if (meetsThresholds) {
-            const excessPoints = calculatePointsAboveThreshold(lineupStats, thresholds);
-            if (excessPoints > bestExcess) {
-                bestExcess = excessPoints;
-                bestLineup = lineup;
-            }
-        }
+    // Initialize current totals to 0 for each threshold stat
+    Object.keys(thresholds).forEach(stat => {
+        currentTotals[stat] = 0;
     });
 
-    // If no lineup meets thresholds, select the lineup closest to the threshold
-    if (bestLineup.length === 0) {
-        bestLineup = getClosestLineup(combinations, thresholds);
+    while (lineup.length < 5) {
+        let bestPlayer = null;
+        let bestScore = -Infinity;
+
+        // Evaluate players based on their contribution to unmet thresholds
+        for (const player of eligiblePlayers) {
+            const playerScore = calculateBalanceScoreForPlayer(player, thresholds, currentTotals);
+
+            if (playerScore > bestScore) {
+                bestScore = playerScore;
+                bestPlayer = player;
+            }
+        }
+
+        if (!bestPlayer) {
+            // No players left who can contribute; stop adding players
+            break;
+        }
+
+        // Add the best player to the lineup
+        lineup.push(bestPlayer);
+
+        // Update current totals with the selected player's stats
+        Object.keys(thresholds).forEach(stat => {
+            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+            const playerStat = getPlayerStat(bestPlayer, statKey) || 0;
+            currentTotals[stat] += playerStat;
+
+        });
+
+        // Remove the selected player from eligible pool
+        eligiblePlayers = eligiblePlayers.filter(p => p !== bestPlayer);
     }
 
-    return { lineup: bestLineup, meetsThresholds: bestLineup.length > 0 };
-}
-
-
-
-function getClosestLineup(combinations, thresholds) {
-    let closestLineup = [];
-    let smallestDeficit = Infinity;
-
-    combinations.forEach(lineup => {
-        const lineupStats = calculateLineupStats(lineup);
-        let totalDeficit = 0;
-
-        Object.keys(thresholds).forEach(stat => {
-            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
-            const threshold = thresholds[stat];
-            const lineupStat = lineupStats[statKey] || 0;
-
-            if (lineupStat < threshold) {
-                totalDeficit += threshold - lineupStat;
-            }
-        });
-
-        if (totalDeficit < smallestDeficit) {
-            smallestDeficit = totalDeficit;
-            closestLineup = lineup;
-        }
+    // Check if the lineup meets thresholds
+    const meetsThresholds = Object.keys(thresholds).every(stat => {
+        return currentTotals[stat] >= thresholds[stat];
     });
 
-    console.log("Selected closest lineup with total deficit:", smallestDeficit);
-    return closestLineup;
+    return { lineup, meetsThresholds };
 }
 
 
-
-// Updated calculatePointsAboveThreshold function
-function calculatePointsAboveThreshold(lineupStats, thresholds) {
-    let totalPointsAboveThreshold = 0;
+function calculateBalanceScoreForPlayer(player, thresholds, currentTotals) {
+    let score = 0;
 
     Object.keys(thresholds).forEach(stat => {
         const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
-        const lineupStatValue = lineupStats[statKey] || 0;
-        const thresholdValue = thresholds[stat] || 0;
+        const playerStat = getPlayerStat(player, statKey) || 0;
 
-        // Only add points if the lineup's stat exceeds the threshold
-        if (lineupStatValue > thresholdValue) {
-            totalPointsAboveThreshold += lineupStatValue - thresholdValue;
-        }
+        const remainingGap = Math.max(thresholds[stat] - (currentTotals[stat] || 0), 0);
+        const contributionRatio = remainingGap > 0 ? Math.min(playerStat / remainingGap, 1) : 0;
+
+        score += contributionRatio; // Reward higher contributions to unmet thresholds
     });
 
-    return totalPointsAboveThreshold;
+    return score;
 }
+
+
+
+
+
+// Utility function to generate combinations of players
+function generateCombinations(array, size) {
+    const results = [];
+    const recurse = (start, combination) => {
+        if (combination.length === size) {
+            results.push([...combination]);
+            return;
+        }
+        for (let i = start; i < array.length; i++) {
+            combination.push(array[i]);
+            recurse(i + 1, combination);
+            combination.pop();
+        }
+    };
+    recurse(0, []);
+    return results;
+}
+
+
+
+
 
 // Function to calculate cumulative stats for a lineup
 function calculateLineupStats(lineup) {
@@ -1509,31 +1598,23 @@ function calculateLineupStats(lineup) {
 
 
 
-// Helper function to generate top potential lineups for each day
-function generatePotentialLineupsForDay(eligiblePlayers, numPlayers) {
-    const potentialLineups = [];
+function evaluateLineup(lineup, thresholds) {
+    let totalStats = {};
+    let meetsThresholds = true;
 
-    for (let i = 0; i < eligiblePlayers.length - 4; i++) {
-        for (let j = i + 1; j < eligiblePlayers.length - 3; j++) {
-            for (let k = j + 1; k < eligiblePlayers.length - 2; k++) {
-                for (let l = k + 1; l < eligiblePlayers.length - 1; l++) {
-                    for (let m = l + 1; m < eligiblePlayers.length; m++) {
-                        const lineup = [
-                            eligiblePlayers[i],
-                            eligiblePlayers[j],
-                            eligiblePlayers[k],
-                            eligiblePlayers[l],
-                            eligiblePlayers[m]
-                        ];
+    lineup.forEach(player => {
+        Object.keys(thresholds).forEach(stat => {
+            const statKey = statMapping[stat] || stat.toLowerCase().replace(/\s/g, "");
+            totalStats[stat] = (totalStats[stat] || 0) + getPlayerStat(player, statKey) || 0;
 
-                        potentialLineups.push(lineup);
-                    }
-                }
+            // Check if thresholds are met
+            if (totalStats[stat] < thresholds[stat]) {
+                meetsThresholds = false;
             }
-        }
-    }
+        });
+    });
 
-    return potentialLineups;
+    return { totalStats, meetsThresholds };
 }
 
 
@@ -1605,22 +1686,33 @@ function getPlayerStat(player, stat) {
 
 // File processing function
 async function processFiles() {
-    await fetchRosterData();
-    await fetchProjectionsData();
+    const loadingCollection = document.getElementById("loadingCollection");
+    loadingCollection.style.display = "block"; // Show loading message
 
-    const topShotInput = document.getElementById('csvFileInput').files[0];
-    if (!topShotInput) {
-        alert("Please upload the NBA Top Shot CSV file.");
-        return;
+    try {
+        await fetchRosterData();
+        await fetchProjectionsData();
+
+        const topShotInput = document.getElementById('csvFileInput').files[0];
+        if (!topShotInput) {
+            alert("Please upload the NBA Top Shot CSV file.");
+            loadingCollection.style.display = "none"; // Hide loading message
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            processTopShotData(e.target.result); // Call processTopShotData directly
+            initializePlayerUsages();
+            loadingCollection.style.display = "none"; // Hide loading message after processing
+        };
+        reader.readAsText(topShotInput);
+    } catch (error) {
+        console.error("Error processing files:", error);
+        loadingCollection.style.display = "none"; // Hide loading message in case of an error
     }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        processTopShotData(e.target.result); // Call processTopShotData directly
-        initializePlayerUsages();
-    };
-    reader.readAsText(topShotInput);
 }
+
 
 // Initialize page with default data
 window.onload = async function() {
